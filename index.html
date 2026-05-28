@@ -1054,7 +1054,149 @@ render();
 buildShopTabs();
 renderShop();
 buildRecetas();
+
+// ── COMENTARIOS ──
+const STORAGE_KEY = "jacobo_notas_v1";
+
+function loadNotas() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  } catch(e) { return []; }
+}
+
+function saveNotas(notas) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(notas));
+}
+
+function renderNotas() {
+  const notas = loadNotas();
+  const lista = document.getElementById("notas-lista");
+  const empty = document.getElementById("notas-empty");
+  const btnResumen = document.getElementById("btn-resumen");
+  if (!notas.length) {
+    lista.innerHTML = "";
+    empty.style.display = "block";
+    btnResumen.style.display = "none";
+    return;
+  }
+  empty.style.display = "none";
+  btnResumen.style.display = "inline-flex";
+  lista.innerHTML = notas.slice().reverse().map((n, i) => {
+    const realIndex = notas.length - 1 - i;
+    const catColors = {
+      "Digestión":        { bg:"#FEF3F2", border:"#FECACA", text:"#991B1B" },
+      "Adherencia":       { bg:"#EBF3FB", border:"#A8C8E8", text:"#0C3358" },
+      "Sensaciones":      { bg:"#EAF3DE", border:"#C0DD97", text:"#27500A" },
+      "Otro":             { bg:"#F3F0FB", border:"#C9BFEF", text:"#3C2E7A" }
+    };
+    const c = catColors[n.cat] || catColors["Otro"];
+    return `<div style="border:1px solid ${c.border};background:${c.bg};border-radius:10px;padding:0.75rem 1rem;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;flex-wrap:wrap;">
+          <span style="font-size:11px;font-weight:600;background:#fff;border:1px solid ${c.border};color:${c.text};border-radius:6px;padding:2px 8px;">${n.cat}</span>
+          <span style="font-size:11px;color:#aaa;">${n.fecha}</span>
+        </div>
+        <div style="font-size:13px;color:#222;line-height:1.55;white-space:pre-wrap;">${n.texto}</div>
+      </div>
+      <button onclick="borrarNota(${realIndex})" style="flex-shrink:0;background:none;border:none;cursor:pointer;font-size:16px;color:#ccc;padding:0;line-height:1;" title="Borrar nota">✕</button>
+    </div>`;
+  }).join("");
+}
+
+function guardarNota() {
+  const cat = document.getElementById("nota-cat").value;
+  const texto = document.getElementById("nota-texto").value.trim();
+  if (!texto) { document.getElementById("nota-texto").focus(); return; }
+  const notas = loadNotas();
+  const ahora = new Date();
+  const fecha = ahora.toLocaleDateString("es-ES", { weekday:"short", day:"numeric", month:"short" });
+  notas.push({ cat, texto, fecha });
+  saveNotas(notas);
+  document.getElementById("nota-texto").value = "";
+  renderNotas();
+}
+
+function borrarNota(index) {
+  const notas = loadNotas();
+  notas.splice(index, 1);
+  saveNotas(notas);
+  renderNotas();
+  document.getElementById("resumen-area").style.display = "none";
+}
+
+function generarResumen() {
+  const notas = loadNotas();
+  if (!notas.length) return;
+  const hoy = new Date().toLocaleDateString("es-ES", { day:"numeric", month:"long", year:"numeric" });
+  let txt = `📋 Notas de seguimiento · Jacobo\n📅 Generado el ${hoy}\n`;
+  txt += "─".repeat(36) + "\n\n";
+  notas.forEach(n => {
+    txt += `🔸 ${n.cat} · ${n.fecha}\n${n.texto}\n\n`;
+  });
+  txt = txt.trim();
+  const area = document.getElementById("resumen-area");
+  document.getElementById("resumen-texto").value = txt;
+  area.style.display = "block";
+  area.scrollIntoView({ behavior:"smooth", block:"nearest" });
+}
+
+function copiarResumen() {
+  const el = document.getElementById("resumen-texto");
+  el.select();
+  el.setSelectionRange(0, 99999);
+  try {
+    navigator.clipboard.writeText(el.value).then(() => {
+      const btn = document.getElementById("btn-copiar");
+      btn.textContent = "✓ Copiado";
+      setTimeout(() => { btn.textContent = "Copiar"; }, 2000);
+    });
+  } catch(e) {
+    document.execCommand("copy");
+  }
+}
+
 </script>
+
+<!-- NOTAS Y COMENTARIOS -->
+<div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid #e5e5e5;">
+  <div class="section-label">Notas de seguimiento</div>
+  <p style="font-size:13px;color:#777;margin-bottom:1rem;line-height:1.5;">Anota aquí cómo te sientes durante la semana: digestión, adherencia al plan, sensaciones generales... Cuando quieras compartirlo, genera el resumen y envíaselo a tu nutricionista.</p>
+
+  <!-- Formulario nueva nota -->
+  <div style="border:1px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;background:#fafafa;">
+    <div style="display:flex;gap:8px;margin-bottom:0.75rem;flex-wrap:wrap;">
+      <select id="nota-cat" style="flex:1;min-width:140px;font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#333;">
+        <option>Digestión</option>
+        <option>Adherencia</option>
+        <option>Sensaciones</option>
+        <option>Otro</option>
+      </select>
+    </div>
+    <textarea id="nota-texto" placeholder="Escribe aquí tu nota..." rows="3" style="width:100%;font-size:13px;padding:9px 12px;border:1px solid #ddd;border-radius:8px;resize:vertical;font-family:inherit;color:#333;background:#fff;margin-bottom:0.75rem;"></textarea>
+    <button onclick="guardarNota()" style="display:inline-flex;align-items:center;gap:6px;background:#0d3d4f;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;">
+      💾 Guardar nota
+    </button>
+  </div>
+
+  <!-- Lista de notas -->
+  <div id="notas-empty" style="font-size:13px;color:#bbb;text-align:center;padding:1.5rem;border:1px dashed #e5e5e5;border-radius:10px;margin-bottom:1rem;">Todavía no hay notas guardadas.</div>
+  <div id="notas-lista" style="display:grid;gap:8px;margin-bottom:1rem;"></div>
+
+  <!-- Botón generar resumen -->
+  <button id="btn-resumen" onclick="generarResumen()" style="display:none;align-items:center;gap:6px;background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;margin-bottom:1rem;">
+    📋 Preparar resumen para enviar
+  </button>
+
+  <!-- Área de resumen -->
+  <div id="resumen-area" style="display:none;">
+    <textarea id="resumen-texto" rows="10" readonly style="width:100%;font-size:12px;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-family:monospace;color:#333;background:#f9f9f9;resize:vertical;margin-bottom:0.5rem;"></textarea>
+    <button id="btn-copiar" onclick="copiarResumen()" style="display:inline-flex;align-items:center;gap:6px;background:#0d3d4f;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;">
+      Copiar
+    </button>
+  </div>
+</div>
+
+<script>renderNotas();</script>
 
 </body>
 </html>
