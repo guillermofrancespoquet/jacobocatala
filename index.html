@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planificación Nutricional — Jacobo</title>
+<link rel="apple-touch-icon" href="Logo.png">
+<meta name="apple-mobile-web-app-title" content="NutriLogos">
+<meta name="application-name" content="NutriLogos">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #fff; color: #1a1a1a; padding: 1.5rem; max-width: 860px; margin: 0 auto; }
+
+  /* ── PLAN SEMANAL ── */
+  .pn-days { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+  .pn-day-btn { padding: 6px 14px; font-size: 13px; border: 1px solid #ccc; border-radius: 8px; background: transparent; color: #555; cursor: pointer; transition: background 0.15s; }
+  .pn-day-btn:hover { background: #f4f4f4; }
+  .pn-day-btn.active { background: #f0f0f0; color: #111; border-color: #888; font-weight: 500; }
+  .pn-meals { display: grid; gap: 10px; }
+  .pn-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 1rem 1.25rem; }
+  .pn-meal-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .pn-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 8px; white-space: nowrap; }
+  .badge-d     { background: #EAF3DE; color: #3B6D11; }
+  .badge-a     { background: #E1F5EE; color: #0F6E56; }
+  .badge-me    { background: #EEEDFE; color: #3C3489; }
+  .badge-c     { background: #FAECE7; color: #993C1D; }
+  .badge-ce    { background: #F3E8FF; color: #6B21A8; }
+  .badge-libre { background: #FBEAF0; color: #993556; }
+  .pn-time { font-size: 12px; color: #aaa; }
+  .pn-name { font-size: 15px; font-weight: 500; color: #111; margin-bottom: 4px; }
+  .pn-note { font-size: 12px; color: #888; border-left: 2px solid #ddd; padding-left: 8px; line-height: 1.5; }
+  .pn-prep { font-size: 12px; color: #666; border-left: 2px solid #b0d8c0; padding-left: 8px; line-height: 1.6; margin-bottom: 6px; }
+  .pn-extra-tag { display: inline-block; font-size: 11px; font-weight: 500; background: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7; border-radius: 6px; padding: 2px 8px; margin-bottom: 6px; }
+  .pn-batch-tag { display: inline-block; font-size: 11px; font-weight: 500; background: #FFF8E1; color: #795700; border: 1px solid #F0D060; border-radius: 6px; padding: 2px 8px; margin-bottom: 6px; }
+  .pn-sport-banner { border-radius: 8px; padding: 8px 12px; font-size: 12px; margin-bottom: 10px; }
+  .pn-sport-banner.fuerza   { background: #E6F1FB; border: 1px solid #B5D4F4; color: #0C447C; }
+  .pn-sport-banner.run      { background: #EAF3DE; border: 1px solid #C0DD97; color: #27500A; }
+  .pn-sport-banner.crossfit { background: #FAEEDA; border: 1px solid #FAC775; color: #633806; }
+  .pn-sport-banner.rest     { background: #F1EFE8; border: 1px solid #D3D1C7; color: #444441; }
+  .pn-libre-banner { background: #FBEAF0; border: 1px solid #F4C0D1; border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #72243E; margin-bottom: 10px; }
+  .pn-supp-banner { background: #F3F0FB; border: 1px solid #C9BFEF; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #3C2E7A; margin-bottom: 10px; line-height: 1.7; }
+  .pn-batch-section { background: #FFFDE7; border: 1px solid #F0D060; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .pn-batch-section h3 { font-size: 13px; font-weight: 600; color: #795700; margin-bottom: 8px; }
+  .pn-batch-section ul { padding-left: 1.1rem; font-size: 13px; color: #555; line-height: 1.85; }
+  .pn-batch-section .bc-note { font-size: 12px; color: #888; margin-top: 10px; border-left: 2px solid #F0D060; padding-left: 8px; }
+  .pn-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid #e5e5e5; }
+  .pn-legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #777; }
+  h1 { font-size: 20px; font-weight: 500; margin-bottom: 0.25rem; }
+  .subtitle { font-size: 13px; color: #777; margin-bottom: 1.5rem; }
+
+  /* ── PERFIL DE LA PERSONA ── */
+  .pn-perfil { margin-bottom: 2rem; }
+  .pn-perfil-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 0.25rem; }
+  .pn-perfil-score { font-size: 12px; font-weight: 500; background: #EAF3DE; color: #3B6D11; border: 1px solid #C0DD97; border-radius: 8px; padding: 2px 10px; }
+  .pn-perfil-sub { font-size: 13px; color: #777; margin-bottom: 1rem; }
+  .pn-perfil-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; }
+  @media (max-width: 600px) { .pn-perfil-grid { grid-template-columns: repeat(2, 1fr); } }
+  .pn-metric { background: #f7f7f7; border-radius: 10px; padding: 0.75rem 1rem; }
+  .pn-metric-lbl { font-size: 11px; color: #999; margin-bottom: 3px; }
+  .pn-metric-val { font-size: 18px; font-weight: 500; color: #111; }
+  .pn-metric-sub { font-size: 11px; color: #bbb; margin-top: 2px; }
+  .pn-impresiones { border: 1px solid #e5e5e5; border-radius: 12px; padding: 1rem 1.25rem; }
+  .pn-imp-item { font-size: 13px; color: #444; line-height: 1.65; padding: 0.4rem 0; border-bottom: 1px solid #f0f0f0; display: flex; gap: 8px; align-items: flex-start; }
+  .pn-imp-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .pn-imp-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+  .pn-imp-dot-green { background: #1D9E75; }
+  .pn-imp-dot-blue  { background: #185FA5; }
+  .pn-imp-dot-amber { background: #BA7517; }
+  .pn-imp-dot-coral { background: #993C1D; }
+  .pn-perfil-divider { border: none; border-top: 1px solid #e5e5e5; margin: 1.5rem 0; }
+  .pn-perfil-section-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  @media (max-width: 600px) { .pn-perfil-section-row { grid-template-columns: 1fr; } }
+  .pn-antro-card { background: #f7f7f7; border-radius: 10px; padding: 0.75rem 1rem; }
+  .pn-antro-card-title { font-size: 11px; font-weight: 500; color: #999; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.6rem; }
+  .pn-antro-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; border-bottom: 1px solid #eee; color: #555; }
+  .pn-antro-row:last-child { border-bottom: none; }
+  .pn-antro-val { font-weight: 500; color: #111; }
+  .pn-antro-val.pending { color: #ccc; font-weight: 400; font-style: italic; }
+  .pn-bio-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 4px 0; border-bottom: 1px solid #eee; }
+  .pn-bio-row:last-child { border-bottom: none; }
+  .pn-bio-label { color: #777; }
+  .pn-bio-val { font-weight: 500; color: #111; }
+  .pn-bio-badge { font-size: 10px; padding: 1px 7px; border-radius: 6px; font-weight: 500; }
+  .bio-normal { background: #EAF3DE; color: #3B6D11; }
+  .bio-alto   { background: #E6F1FB; color: #185FA5; }
+  .bio-bajo   { background: #FBEAF0; color: #993556; }
+  .section-label { font-size: 12px; font-weight: 500; color: #666; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.85rem; padding-bottom: 0.4rem; border-bottom: 1px solid #e8e8e8; }
+
+  /* ── LISTA DE COMPRA ── */
+  .pn-shop-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .pn-shop-btn { padding: 6px 14px; font-size: 13px; border: 1px solid #ccc; border-radius: 8px; background: transparent; color: #555; cursor: pointer; transition: background 0.15s; }
+  .pn-shop-btn:hover { background: #f4f4f4; }
+  .pn-shop-btn.active { background: #f0f0f0; color: #111; border-color: #888; font-weight: 500; }
+  .pn-shop-btn.active.cat-prot  { background: #E6F1FB; border-color: #B5D4F4; color: #0C447C; }
+  .pn-shop-btn.active.cat-carb  { background: #FAEEDA; border-color: #FAC775; color: #633806; }
+  .pn-shop-btn.active.cat-fat   { background: #EAF3DE; border-color: #C0DD97; color: #27500A; }
+  .pn-shop-btn.active.cat-extra { background: #F1EFE8; border-color: #D3D1C7; color: #444441; }
+  .pn-shop-list { display: grid; gap: 8px; }
+  .pn-shop-item { border: 1px solid #e5e5e5; border-radius: 10px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; gap: 12px; cursor: pointer; transition: background 0.15s, opacity 0.15s; }
+  .pn-shop-item.cat-prot  { background: #f5f9fe; }
+  .pn-shop-item.cat-carb  { background: #fefaf5; }
+  .pn-shop-item.cat-fat   { background: #f6fbf2; }
+  .pn-shop-item.cat-extra { background: #f8f8f6; }
+  .pn-shop-item:hover { filter: brightness(0.97); }
+  .pn-shop-item.done { opacity: 0.38; }
+  .pn-shop-item.done .pn-shop-item-name { text-decoration: line-through; color: #aaa; }
+  .pn-shop-item-name { font-size: 13px; font-weight: 500; color: #111; }
+  .pn-shop-item-qty { font-size: 12px; font-weight: 500; color: #555; white-space: nowrap; text-align: right; }
+
+  /* ── INGREDIENTES EN PILLS ── */
+  .pn-ing-list { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+  .pn-ing { display: inline-block; font-size: 12px; background: #f4f4f4; border: 1px solid #e8e8e8; border-radius: 6px; padding: 3px 9px; color: #444; line-height: 1.4; }
+
+  /* ── SUPLEMENTACIÓN ── */
+  .pn-supl-block { background: #F3F0FB; border: 1px solid #C9BFEF; border-radius: 12px; padding: 1rem 1.25rem; }
+  .pn-supl-item { display: flex; gap: 10px; align-items: flex-start; padding: 0.5rem 0; border-bottom: 1px solid #DDD8F5; font-size: 13px; color: #333; line-height: 1.5; }
+  .pn-supl-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .pn-supl-dot { width: 6px; height: 6px; border-radius: 50%; background: #7C5CBF; flex-shrink: 0; margin-top: 6px; }
+
+  /* ── RECETAS ── */
+  .pn-receta { border: 1px solid #e5e5e5; border-radius: 12px; overflow: hidden; margin-bottom: 8px; }
+  .pn-receta-header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1.25rem; cursor: pointer; background: #fafafa; transition: background 0.15s; user-select: none; }
+  .pn-receta-header:hover { background: #f3f3f3; }
+  .pn-receta-title { font-size: 14px; font-weight: 500; color: #111; display: flex; align-items: center; gap: 8px; }
+  .pn-receta-arrow { font-size: 12px; color: #aaa; transition: transform 0.2s; }
+  .pn-receta.open .pn-receta-arrow { transform: rotate(90deg); }
+  .pn-receta-body { display: none; padding: 1rem 1.25rem; border-top: 1px solid #e5e5e5; background: #fff; }
+  .pn-receta.open .pn-receta-body { display: block; }
+  .pn-receta-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .pn-receta-meta-pill { font-size: 11px; background: #f4f4f4; border: 1px solid #e8e8e8; border-radius: 6px; padding: 3px 10px; color: #555; }
+  .pn-receta-section { font-size: 11px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.5rem; margin-top: 0.85rem; }
+  .pn-receta-ings { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 0.5rem; }
+  .pn-receta-ing { font-size: 12px; background: #f4f4f4; border: 1px solid #e8e8e8; border-radius: 6px; padding: 3px 10px; color: #444; }
+  .pn-receta-steps { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .pn-receta-step { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: #444; line-height: 1.55; }
+  .pn-receta-step-num { min-width: 22px; height: 22px; border-radius: 50%; background: #f0f0f0; border: 1px solid #e0e0e0; font-size: 11px; font-weight: 600; color: #666; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .pn-receta-tip { font-size: 12px; color: #888; border-left: 2px solid #ddd; padding-left: 8px; margin-top: 0.75rem; line-height: 1.5; }
+
+  /* ── BOTÓN IMPRIMIR ── */
+  .pn-print-btn { display: inline-flex; align-items: center; gap: 7px; background: #0d3d4f; color: #fff; border: none; border-radius: 10px; padding: 10px 20px; font-size: 13px; font-weight: 500; cursor: pointer; letter-spacing: 0.02em; }
+  .pn-print-btn:hover { background: #0f4d63; }
+
+  /* ── IMPRESIÓN ── */
+  @media print {
+    @page { size: A4 landscape; margin: 1.5cm 1.8cm; }
+    @page { margin-top: 0; margin-bottom: 0; }
+    body * { visibility: hidden; }
+    #printArea, #printArea * { visibility: visible; }
+    #printArea { position: absolute; top: 0; left: 0; right: 0; display: flex !important; flex-direction: column; justify-content: center; box-sizing: border-box; }
+    .pn-print-btn { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Planificación Nutricional — Jacobo</h1>
+<p class="subtitle">Pérdida de grasa · Base 90% vegetal · 4 comidas/día + café · ~2000–2050 kcal · Déficit ~450–500 kcal · ~140 g proteína</p>
+
+<!-- DESCRIPCIÓN DEL CLIENTE -->
+<div style="border:1px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;background:#fafafa;">
+  <div style="font-size:11px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem;">Descripción del cliente</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;">
+    <div style="background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:6px 12px;font-size:12px;color:#333;">
+      <span style="color:#999;font-size:10px;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px;">Perfil</span>
+      Hombre · 67 años · 181 cm · 82,4 kg
+    </div>
+    <div style="background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:6px 12px;font-size:12px;color:#333;">
+      <span style="color:#999;font-size:10px;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px;">Contexto</span>
+      Jubilado activo · buena situación económica · tiempo para cocinar
+    </div>
+    <div style="background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:6px 12px;font-size:12px;color:#333;">
+      <span style="color:#999;font-size:10px;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px;">Objetivo</span>
+      Reducir grasa corporal del 22,2% al 20% en 30 días (~1,8 kg de grasa)
+    </div>
+    <div style="background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:6px 12px;font-size:12px;color:#333;">
+      <span style="color:#999;font-size:10px;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px;">Hábitos</span>
+      No fuma · No bebe alcohol · Sueño óptimo
+    </div>
+    <div style="background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:6px 12px;font-size:12px;color:#333;">
+      <span style="color:#999;font-size:10px;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:2px;">Aversiones / exclusiones</span>
+      Sin pepino · Fruta limitada (sensibilidad digestiva)
+    </div>
+  </div>
+</div>
+
+<!-- OBJETIVO -->
+<div style="background:#EBF3FB;border:1.5px solid #A8C8E8;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;">
+  <div style="font-size:11px;font-weight:600;color:#1a4a72;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">Objetivo</div>
+  <p style="font-size:14px;font-weight:600;color:#0C3358;line-height:1.65;">Reducir la grasa corporal del 22,2% al 20% en 30 días (~1,8 kg de grasa) mediante un déficit calórico controlado de 450–500 kcal/día sobre un TEE estimado de ~2500 kcal. La base del plan es 90% vegetal, preservando la masa muscular esquelética (41,4 kg, muy por encima del rango normal) con una ingesta proteica de ~140 g/día (1,7 g/kg). El pescado azul (salmón, caballa) se incorpora hasta 3–4 veces por semana. La grasa acumulada en abdomen y cresta ilíaca es el principal punto de intervención.</p>
+</div>
+
+<!-- PERFIL DE LA PERSONA -->
+<div class="pn-perfil">
+  <div class="pn-perfil-header">
+    <span style="font-size:15px;font-weight:500;color:#111">Perfil de la persona</span>
+    <span class="pn-perfil-score">Condición física 83,1 / 100</span>
+  </div>
+  <p class="pn-perfil-sub">Jacobo Catalá · 67 años · Hombre · Valorado el 17/04/2026</p>
+
+  <div class="pn-perfil-grid" style="margin-bottom:10px">
+    <div class="pn-metric"><div class="pn-metric-lbl">Peso actual</div><div class="pn-metric-val">82,4 kg</div><div class="pn-metric-sub">IMC 25,2 · Sobrepeso leve</div></div>
+    <div class="pn-metric"><div class="pn-metric-lbl">Talla / envergadura</div><div class="pn-metric-val">181 / — cm</div><div class="pn-metric-sub">Pendiente antropometría</div></div>
+    <div class="pn-metric"><div class="pn-metric-lbl">% Masa grasa (Yuhasz)</div><div class="pn-metric-val">— %</div><div class="pn-metric-sub">— kg · Σ6 pliegues: — mm</div></div>
+    <div class="pn-metric"><div class="pn-metric-lbl">% Masa muscular</div><div class="pn-metric-val">— %</div><div class="pn-metric-sub">— kg · Z Phantom —</div></div>
+  </div>
+  <div class="pn-perfil-grid" style="margin-bottom:10px">
+    <div class="pn-metric"><div class="pn-metric-lbl">LBM (masa libre de grasa)</div><div class="pn-metric-val">64,1 kg</div><div class="pn-metric-sub">Músculo esquelético: 41,4 kg</div></div>
+    <div class="pn-metric"><div class="pn-metric-lbl">TMB (bioimpedancia)</div><div class="pn-metric-val">1754 kcal</div><div class="pn-metric-sub">Edad metabólica: 66 años</div></div>
+    <div class="pn-metric"><div class="pn-metric-lbl">% Grasa corporal (PBF)</div><div class="pn-metric-val">22,2 %</div><div class="pn-metric-sub">18,29 kg · Obesidad media</div></div>
+    <div class="pn-metric"><div class="pn-metric-lbl">Ratio cintura / cadera</div><div class="pn-metric-val">—</div><div class="pn-metric-sub">Pendiente antropometría</div></div>
+  </div>
+
+  <div style="margin-bottom:10px">
+    <div class="section-label">Somatotipo (Carter-Heath)</div>
+    <div style="display:flex;gap:10px;align-items:stretch;flex-wrap:wrap">
+      <div style="flex:1;min-width:200px;border:1px solid #e5e5e5;border-radius:10px;padding:0.75rem 1rem;display:flex;flex-direction:column;gap:10px;overflow:hidden;">
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:4px;width:100%;min-width:0;">
+          <div style="text-align:center;min-width:0;"><div style="font-size:16px;font-weight:500;color:#ccc;">—</div><div style="font-size:10px;color:#aaa;margin-top:2px;">Endomorfia</div></div>
+          <div style="color:#ddd;font-size:20px;text-align:center;">—</div>
+          <div style="text-align:center;min-width:0;"><div style="font-size:16px;font-weight:500;color:#ccc;">—</div><div style="font-size:10px;color:#aaa;margin-top:2px;">Mesomorfia</div></div>
+          <div style="color:#ddd;font-size:20px;text-align:center;">—</div>
+          <div style="text-align:center;min-width:0;"><div style="font-size:16px;font-weight:500;color:#ccc;">—</div><div style="font-size:10px;color:#aaa;margin-top:2px;">Ectomorfia</div></div>
+        </div>
+        <div style="text-align:center;border-top:1px solid #f0f0f0;padding-top:8px;">
+          <div style="font-size:12px;color:#ccc;font-style:italic">Pendiente valoración antropométrica</div>
+          <div style="font-size:11px;color:#aaa;">Valoración actual</div>
+        </div>
+      </div>
+      <div class="pn-metric" style="flex:1;min-width:200px"><div class="pn-metric-lbl">Valoración previa</div><div style="font-size:13px;color:#ccc;margin-top:4px;font-style:italic">Sin valoración previa registrada</div><div class="pn-metric-sub">Primera valoración</div></div>
+      <div class="pn-metric" style="flex:1;min-width:200px"><div class="pn-metric-lbl">Grupo de referencia (ISAK)</div><div style="font-size:13px;color:#ccc;margin-top:4px;font-style:italic">Pendiente antropometría</div><div class="pn-metric-sub">Completar en próxima sesión</div></div>
+    </div>
+  </div>
+
+  <div class="pn-perfil-section-row">
+    <div>
+      <div class="section-label">Datos antropométricos clave</div>
+      <div class="pn-antro-card">
+        <div class="pn-antro-card-title">Pliegues cutáneos</div>
+        <div class="pn-antro-row"><span>Tríceps</span><span class="pn-antro-val pending">—</span></div>
+        <div class="pn-antro-row"><span>Subescapular</span><span class="pn-antro-val pending">—</span></div>
+        <div class="pn-antro-row"><span>Bíceps</span><span class="pn-antro-val pending">—</span></div>
+        <div class="pn-antro-row"><span>Cresta ilíaca</span><span class="pn-antro-val pending">—</span></div>
+        <div class="pn-antro-row"><span>Supraespinal</span><span class="pn-antro-val pending">—</span></div>
+        <div class="pn-antro-row"><span>Abdominal</span><span class="pn-antro-val pending">—</span></div>
+        <div class="pn-antro-row"><span>Muslo</span><span class="pn-antro-val pending">—</span></div>
+        <div class="pn-antro-row"><span>Pierna</span><span class="pn-antro-val pending">—</span></div>
+        <div class="pn-antro-row" style="margin-top:4px;padding-top:6px;border-top:1px solid #ddd"><span style="font-weight:500">Σ6 pliegues</span><span class="pn-antro-val pending">—</span></div>
+        <div class="pn-antro-row"><span style="font-weight:500">Σ8 pliegues</span><span class="pn-antro-val pending">—</span></div>
+      </div>
+      <div class="pn-antro-card" style="margin-top:10px">
+        <div class="pn-antro-card-title">Perímetros</div>
+        <div class="pn-antro-row"><span>Cintura</span><span class="pn-antro-val pending">—</span></div>
+        <div class="pn-antro-row"><span>Cadera</span><span class="pn-antro-val pending">—</span></div>
+        <div class="pn-antro-row"><span>Brazo relajado / contraído</span><span class="pn-antro-val pending">— / —</span></div>
+        <div class="pn-antro-row"><span>Muslo / pierna</span><span class="pn-antro-val pending">— / —</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="section-label">Datos bioimpedancia</div>
+      <div class="pn-antro-card">
+        <div class="pn-antro-card-title">Composición corporal</div>
+        <div class="pn-bio-row"><span class="pn-bio-label">Agua corporal</span><div style="display:flex;gap:6px;align-items:center"><span class="pn-bio-val">46,3 L</span><span class="pn-bio-badge bio-normal">Normal</span></div></div>
+        <div class="pn-bio-row"><span class="pn-bio-label">Proteína</span><div style="display:flex;gap:6px;align-items:center"><span class="pn-bio-val">14,6 kg</span><span class="pn-bio-badge bio-normal">Normal</span></div></div>
+        <div class="pn-bio-row"><span class="pn-bio-label">Masa ósea</span><div style="display:flex;gap:6px;align-items:center"><span class="pn-bio-val">3,21 kg</span><span class="pn-bio-badge bio-normal">Normal</span></div></div>
+        <div class="pn-bio-row"><span class="pn-bio-label">Masa grasa corporal</span><div style="display:flex;gap:6px;align-items:center"><span class="pn-bio-val">18,29 kg</span><span class="pn-bio-badge bio-alto">Sobre</span></div></div>
+        <div class="pn-bio-row"><span class="pn-bio-label">% Grasa (PBF)</span><div style="display:flex;gap:6px;align-items:center"><span class="pn-bio-val">22,2 %</span><span class="pn-bio-badge bio-alto">Obesidad media</span></div></div>
+        <div class="pn-bio-row"><span class="pn-bio-label">Músculo esquelético</span><div style="display:flex;gap:6px;align-items:center"><span class="pn-bio-val">41,4 kg</span><span class="pn-bio-badge bio-alto">Alto</span></div></div>
+        <div class="pn-bio-row"><span class="pn-bio-label">Grasa visceral</span><div style="display:flex;gap:6px;align-items:center"><span class="pn-bio-val">Nivel 8</span><span class="pn-bio-badge bio-normal">Normal</span></div></div>
+        <div class="pn-bio-row"><span class="pn-bio-label">Índice grasa subcutánea</span><div style="display:flex;gap:6px;align-items:center"><span class="pn-bio-val">19,6 %</span><span class="pn-bio-badge bio-alto">Sobre rango</span></div></div>
+      </div>
+      <div class="pn-antro-card" style="margin-top:10px">
+        <div class="pn-antro-card-title">Fuerza y equilibrio muscular</div>
+        <div class="pn-bio-row"><span class="pn-bio-label">Fuerza superior</span><span class="pn-bio-badge bio-normal">Normal</span></div>
+        <div class="pn-bio-row"><span class="pn-bio-label">Fuerza inferior</span><span class="pn-bio-badge bio-normal">Normal</span></div>
+        <div class="pn-bio-row"><span class="pn-bio-label">Equilibrio superior</span><span class="pn-bio-badge bio-bajo">Lig. desequilibrado</span></div>
+        <div class="pn-bio-row"><span class="pn-bio-label">Equilibrio inferior</span><span class="pn-bio-badge bio-bajo">Lig. desequilibrado</span></div>
+        <div class="pn-bio-row"><span class="pn-bio-label">IMC</span><div style="display:flex;gap:6px;align-items:center"><span class="pn-bio-val">25,2</span><span class="pn-bio-badge bio-alto">Sobre</span></div></div>
+      </div>
+      <div class="pn-antro-card" style="margin-top:10px">
+        <div class="pn-antro-card-title">Control de peso (objetivo)</div>
+        <div class="pn-bio-row"><span class="pn-bio-label">Peso deseado</span><span class="pn-bio-val">75,42 kg</span></div>
+        <div class="pn-bio-row"><span class="pn-bio-label">Control de grasa</span><span class="pn-bio-val">−6,98 kg</span></div>
+        <div class="pn-bio-row"><span class="pn-bio-label">Control muscular</span><span class="pn-bio-val">+0 kg</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:10px">
+    <div class="section-label">Impresiones del profesional</div>
+    <div class="pn-impresiones">
+      <div class="pn-imp-item"><div class="pn-imp-dot pn-imp-dot-green"></div><div><strong>Excelente masa muscular esquelética.</strong> 41,4 kg de músculo esquelético está muy por encima del rango normal para su edad, reflejo de su constancia en el entrenamiento de fuerza. Activo metabólico clave que debe preservarse durante el déficit.</div></div>
+      <div class="pn-imp-item"><div class="pn-imp-dot pn-imp-dot-green"></div><div><strong>Buena condición metabólica general.</strong> Puntuación 83,1/100. TMB de 1754 kcal con edad metabólica acorde a la biológica (66 años). Agua corporal, proteína y masa ósea en rango normal.</div></div>
+      <div class="pn-imp-item"><div class="pn-imp-dot pn-imp-dot-blue"></div><div><strong>Objetivo: recomposición corporal con foco en grasa abdominal.</strong> PBF 22,2% (18,29 kg de grasa) con acumulación principal en abdomen y cresta ilíaca. Meta inicial: −1,8 kg de grasa en 30 días hasta alcanzar 20%, con déficit controlado de ~450–500 kcal/día.</div></div>
+      <div class="pn-imp-item"><div class="pn-imp-dot pn-imp-dot-amber"></div><div><strong>Desequilibrio muscular leve superior e inferior.</strong> El análisis segmentario muestra ligero desequilibrio en ambos trenes. A vigilar en los entrenamientos; puede indicar dominancia lateral. Recomendable comentarlo con el entrenador.</div></div>
+      <div class="pn-imp-item"><div class="pn-imp-dot pn-imp-dot-amber"></div><div><strong>Antropometría pendiente.</strong> No disponemos aún de pliegues cutáneos, perímetros ni somatotipo. Completar en la próxima sesión para obtener el perfil ISAK completo: Yuhasz, Z Phantom, ratio cintura/cadera y somatotipo Carter-Heath.</div></div>
+      <div class="pn-imp-item"><div class="pn-imp-dot pn-imp-dot-coral"></div><div><strong>Grasa subcutánea sobre rango y masa grasa total elevada.</strong> 18,29 kg de grasa corporal supera el rango recomendado (8,63–17,27 kg). Aunque la grasa visceral es normal (nivel 8), la subcutánea abdominal es el principal punto de intervención nutricional de este plan.</div></div>
+    </div>
+  </div>
+</div>
+
+<hr class="pn-perfil-divider">
+
+<!-- TABLA RESUMEN SEMANAL -->
+<div id="printArea" style="margin-bottom:1.5rem;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem;padding-bottom:0.4rem;border-bottom:1px solid #e8e8e8;">
+    <div class="section-label" style="margin:0;padding:0;border:none;">Menú semanal de un vistazo</div>
+    <button class="pn-print-btn" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+  </div>
+  <div style="overflow-x:auto;border-radius:12px;border:1px solid #e5e5e5;">
+    <table style="width:100%;border-collapse:collapse;min-width:700px;font-size:12px;">
+      <thead>
+        <tr>
+          <th style="background:#dce8f5;color:#1a2e44;padding:9px 10px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-right:1px solid #c5d8ed;width:46px;"></th>
+          <th style="background:#dce8f5;color:#1a2e44;padding:9px 10px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-right:1px solid #c5d8ed;">Lunes</th>
+          <th style="background:#dce8f5;color:#1a2e44;padding:9px 10px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-right:1px solid #c5d8ed;">Martes</th>
+          <th style="background:#dce8f5;color:#1a2e44;padding:9px 10px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-right:1px solid #c5d8ed;">Miércoles</th>
+          <th style="background:#dce8f5;color:#1a2e44;padding:9px 10px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-right:1px solid #c5d8ed;">Jueves</th>
+          <th style="background:#dce8f5;color:#1a2e44;padding:9px 10px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-right:1px solid #c5d8ed;">Viernes</th>
+          <th style="background:#dce8f5;color:#1a2e44;padding:9px 10px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-right:1px solid #c5d8ed;">Sábado</th>
+          <th style="background:#dce8f5;color:#1a2e44;padding:9px 10px;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Domingo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="background:#f7f7f7;padding:8px 6px;border-right:2px solid #e0e0e0;border-bottom:1px solid #eee;text-align:center;vertical-align:middle;"><span class="pn-badge badge-d" style="display:inline-block;">D</span></td>
+          <td style="background:#f9fcf5;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;" colspan="7">Café con leche</td>
+        </tr>
+        <tr>
+          <td style="background:#f7f7f7;padding:8px 6px;border-right:2px solid #e0e0e0;border-bottom:1px solid #eee;text-align:center;vertical-align:middle;"><span class="pn-badge badge-a" style="display:inline-block;">A</span></td>
+          <td style="background:#f3fdf8;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Avena con bebida vegetal, nueces, frutos rojos y plátano</td>
+          <td style="background:#f3fdf8;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Tostadas masa madre con aguacate, tomate y lino</td>
+          <td style="background:#f3fdf8;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Smoothie bowl verde con granola y arándanos</td>
+          <td style="background:#f3fdf8;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Avena con bebida vegetal, pera y almendras laminadas</td>
+          <td style="background:#f3fdf8;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Tostadas con hummus, tomate, AOVE y semillas</td>
+          <td style="background:#f3fdf8;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Tortitas de avena y plátano con arándanos</td>
+          <td style="background:#f3fdf8;padding:8px 10px;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Overnight oats con chía, kiwi y nueces</td>
+        </tr>
+        <tr>
+          <td style="background:#f7f7f7;padding:8px 6px;border-right:2px solid #e0e0e0;border-bottom:1px solid #eee;text-align:center;vertical-align:middle;"><span class="pn-badge badge-c" style="display:inline-block;">C</span></td>
+          <td style="background:#faece7;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Ensalada de lentejas con edamame y verduras asadas</td>
+          <td style="background:#faece7;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Crema de calabaza + quinoa con garbanzos y espinacas</td>
+          <td style="background:#faece7;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Ensalada de quinoa con atún al natural y garbanzos</td>
+          <td style="background:#faece7;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Potaje de alubias blancas con verduras y pan integral</td>
+          <td style="background:#faece7;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Ensalada de quinoa con remolacha, garbanzos y naranja</td>
+          <td style="background:#faece7;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Salmón a la plancha con ensalada grande y patatas al horno</td>
+          <td style="background:#faece7;padding:8px 10px;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Estofado de lentejas pardinas con verduras y pan integral</td>
+        </tr>
+        <tr>
+          <td style="background:#f7f7f7;padding:8px 6px;border-right:2px solid #e0e0e0;border-bottom:1px solid #eee;text-align:center;vertical-align:middle;"><span class="pn-badge badge-me" style="display:inline-block;">S</span></td>
+          <td style="background:#f5f3ff;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Yogur de soja ALPRO con kiwi, manzana, almendras y semillas</td>
+          <td style="background:#f5f3ff;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Yogur de soja ALPRO con arándanos, naranja, almendras y nueces</td>
+          <td style="background:#f5f3ff;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Tostada con crema de cacahuete, pera y semillas de calabaza</td>
+          <td style="background:#f5f3ff;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Hummus con bastones de verdura cruda, manzana y nueces</td>
+          <td style="background:#f5f3ff;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Yogur de soja ALPRO con arándanos, kiwi, almendras y semillas</td>
+          <td style="background:#f5f3ff;padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Smoothie tropical y mix de frutos secos</td>
+          <td style="background:#f5f3ff;padding:8px 10px;border-bottom:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Tostadas con hummus, rabanitos y naranja con almendras</td>
+        </tr>
+        <tr>
+          <td style="background:#f7f7f7;padding:8px 6px;border-right:2px solid #e0e0e0;text-align:center;vertical-align:middle;"><span class="pn-badge badge-ce" style="display:inline-block;">Ce</span></td>
+          <td style="background:#fdf8ff;padding:8px 10px;border-right:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Brócoli, champiñones y arroz integral con proteína a elegir</td>
+          <td style="background:#fdf8ff;padding:8px 10px;border-right:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Salmón con boniato y ensalada verde</td>
+          <td style="background:#fdf8ff;padding:8px 10px;border-right:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Pasta integral con sofrito de verduras y soja texturizada</td>
+          <td style="background:#fdf8ff;padding:8px 10px;border-right:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Curry de garbanzos</td>
+          <td style="background:#fdf8ff;padding:8px 10px;border-right:1px solid #eee;text-align:center;color:#333;line-height:1.4;">Caballa con verduras asadas y arroz integral</td>
+          <td style="background:#fbeaf0;padding:8px 10px;border-right:1px solid #eee;text-align:center;color:#72243E;font-style:italic;line-height:1.4;">Libre ★</td>
+          <td style="background:#fdf8ff;padding:8px 10px;text-align:center;color:#333;line-height:1.4;">Pizza integral con base de tortilla de avena</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MENÚ DESARROLLADO POR DÍAS -->
+<div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid #e5e5e5;">
+  <div class="section-label">Menú desarrollado por días</div>
+  <div class="pn-days" id="dayTabs"></div>
+  <div id="dayView"></div>
+  <div class="pn-legend">
+    <span style="font-size:12px;color:#aaa;margin-right:4px;">Comidas:</span>
+    <span class="pn-legend-item"><span class="pn-badge badge-d">D</span> Desayuno</span>
+    <span class="pn-legend-item"><span class="pn-badge badge-a">A</span> Almuerzo</span>
+    <span class="pn-legend-item"><span class="pn-badge badge-c">C</span> Comida</span>
+    <span class="pn-legend-item"><span class="pn-badge badge-me">S</span> Snack / Merienda</span>
+    <span class="pn-legend-item"><span class="pn-badge badge-ce">Ce</span> Cena</span>
+    <span class="pn-legend-item"><span class="pn-badge badge-libre">Libre</span> Comida libre</span>
+  </div>
+</div>
+
+<!-- LISTA DE COMPRA SEMANAL -->
+<div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid #e5e5e5;">
+  <div class="section-label">Lista de compra semanal</div>
+  <div class="pn-shop-tabs" id="shopTabs"></div>
+  <div id="shopView"></div>
+</div>
+
+<!-- RECETAS -->
+<div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid #e5e5e5;">
+  <div class="section-label">Recetas</div>
+  <div id="recetasList"></div>
+</div>
+
+<!-- PRÓXIMA REVISIÓN -->
+<div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid #e5e5e5;">
+  <div class="section-label">Próxima revisión</div>
+  <div style="display:flex;align-items:center;gap:14px;background:#fafafa;border:1px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;flex-wrap:wrap;">
+    <div style="font-size:28px;">📅</div>
+    <div style="flex:1;min-width:200px;">
+      <div style="font-size:16px;font-weight:500;color:#111;">17 de mayo de 2026</div>
+      <div style="font-size:12px;color:#999;margin-top:3px;">Valoración antropométrica + bioimpedancia · Revisión de adherencia y sensaciones · Ajuste de plan si procede</div>
+    </div>
+    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Revisi%C3%B3n+nutricional+%E2%80%94+Jacobo&dates=20260517T090000Z%2F20260517T100000Z&details=Valoraci%C3%B3n+antropom%C3%A9trica+%2B+bioimpedancia.+Revisi%C3%B3n+de+adherencia+y+sensaciones.+Ajuste+de+plan+si+procede.&location=Nutrilogos" target="_blank" style="display:inline-flex;align-items:center;gap:7px;background:#0d3d4f;color:#fff;text-decoration:none;border-radius:10px;padding:9px 18px;font-size:13px;font-weight:500;letter-spacing:0.02em;white-space:nowrap;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Añadir al calendario
+    </a>
+  </div>
+</div>
+
+<script>
+const days = [
+  {
+    short:"Lun", full:"Lunes", sport:"🏋️ Fuerza", sportClass:"fuerza",
+    sportBanner:"Día de fuerza. ~2.060 kcal · ~95 g proteína",
+    suppl:null,
+    libre:false, batchCooking:null,
+    meals:[
+      { type:"D", time:"Mañana", name:"Café con leche", tags:[],
+        desc:"Café solo o cortado · bebida vegetal al gusto",
+        prep:"",
+        note:"La mejor opción es la bebida vegetal. Si se prefiere leche de vaca, la desnatada es la más adecuada: proteína de alta calidad con mínima grasa saturada. No cuenta en el cómputo calórico principal del día." },
+      { type:"A", time:"8:00–9:30", name:"Avena con bebida vegetal, nueces, frutos rojos y plátano", tags:[],
+        desc:"Copos de avena 60 g · bebida vegetal 250 ml · nueces 30 g · 1 plátano · 1 puñado de frutos rojos · canela al gusto",
+        prep:"Cocer la avena con la bebida vegetal 5 min en un cazo a fuego medio o 2 minutos en microondas a máxima potencia. Extraer y decorar con plátano en rodajas, frutos rojos, nueces y canela.",
+        note:"Frutos rojos y plátano aportan dulzor natural y antioxidantes sin necesidad de azúcares añadidos. La canela mejora la respuesta glucémica." },
+      { type:"C", time:"13:30–14:30", name:"Ensalada de lentejas con edamame y verduras asadas", tags:[],
+        desc:"Lentejas cocidas 320 g · edamame cocido 80 g · pimiento rojo asado 100 g · zanahoria asada 80 g · espinacas 50 g · AOVE 15 ml · limón",
+        prep:"Mezclar lentejas frías con el edamame y las verduras asadas templadas. El edamame aporta proteína completa. Aliñar al momento con AOVE, especias al gusto y zumo de limón.",
+        note:"Sustituir edamame por tofu a la plancha (100 g) si no se encuentra. Verdura cruda adicional ad libitum." },
+      { type:"Me", time:"17:00–17:30", name:"Yogur de soja ALPRO con kiwi, manzana, almendras y semillas", tags:[],
+        desc:"Yogur de soja ALPRO 200 g · 1 kiwi · ½ manzana · almendras 30 g · semillas 10–15 g",
+        prep:"Cortar la fruta en trozos. Mezclar en un bol con el yogur, añadir las almendras y las semillas por encima.",
+        note:"El kiwi es especialmente digestivo para él: la actinidina mejora la digestión de proteínas. Semillas recomendadas: chía o lino molido." },
+      { type:"Ce", time:"20:30–21:30", name:"Brócoli, champiñones y arroz integral con proteína a elegir", tags:[],
+        desc:"Proteína a elegir · brócoli 200 g · champiñones 100 g · arroz integral 125–150 g (60 g crudo) · AOVE 10 ml · cúrcuma · pimienta · jengibre rallado opcional\n— Opción A: garbanzos cocidos 200 g\n— Opción B: merluza o bacalao a la plancha 200 g (~40 g prot)\n— Opción C: tempeh desmenuzado 150 g",
+        prep:"Saltear la proteína elegida en sartén con AOVE. Añadir brócoli en ramilletes y champiñones. Condimentar con cúrcuma, pimienta y jengibre. Servir sobre arroz integral cocido o añadir arroz y saltear 2 minutos más.",
+        note:"Cúrcuma + pimienta negra aumenta la biodisponibilidad de curcumina ×20." }
+    ]
+  },
+  {
+    short:"Mar", full:"Martes", sport:"🏋️ Fuerza", sportClass:"fuerza",
+    sportBanner:"Día de fuerza con salmón en cena — omega-3 y proteína alta. ~2.065 kcal · ~118 g proteína",
+    suppl:null, libre:false, batchCooking:null,
+    meals:[
+      { type:"D", time:"Mañana", name:"Café con leche", tags:[],
+        desc:"Café solo o cortado · bebida vegetal al gusto",
+        prep:"", note:"" },
+      { type:"A", time:"8:00–9:30", name:"Tostadas de masa madre con aguacate, tomate y lino", tags:[],
+        desc:"Pan integral masa madre 80 g (2 reb.) · ½ aguacate (70 g) · tomate 100 g · semillas lino molidas 10 g · AOVE 10 ml",
+        prep:"Tostar el pan. Machacar el aguacate con unas gotas de limón y sal. Poner el tomate en rodajas y espolvorear el lino molido por encima.",
+        note:"El lino debe ser molido (no entero) para aprovechar los omega-3. Sin fruta en el almuerzo este día para distribuir mejor el cupo digestivo." },
+      { type:"C", time:"13:30–14:30", name:"Crema de calabaza + quinoa con garbanzos y espinacas", tags:[],
+        desc:"Crema de calabaza con jengibre 300 ml · quinoa 125–150 g (65 g crudo) · garbanzos cocidos 180 g · espinacas 80 g · AOVE 15 ml",
+        prep:"Mezclar la crema de calabaza (puede ser comprada, ej. marca Don Simón) con jengibre rallado. Saltear la quinoa cocida con garbanzos y espinacas con ajo, especias y AOVE.",
+        note:"Preparar doble cantidad de crema el domingo para tener reserva toda la semana." },
+      { type:"Me", time:"17:00–17:30", name:"Yogur de soja ALPRO con arándanos, naranja, almendras y nueces", tags:[],
+        desc:"Yogur de soja ALPRO 200 g · arándanos 80 g · 1 naranja troceada · nueces 20 g · almendras 20 g",
+        prep:"Mezclar en un bol. La vitamina C de la naranja mejora la absorción del hierro no hemo del almuerzo.",
+        note:"Si el entreno es por la tarde, tomar esta merienda 60–90 min antes como pre-workout ligero." },
+      { type:"Ce", time:"20:30–21:30", name:"Salmón con boniato y ensalada verde", tags:[],
+        desc:"Salmón fresco 180 g · boniato 250 g · rúcula 60 g · tomate 80 g · AOVE 10 ml · limón · eneldo",
+        prep:"Salmón en papillote al horno con eneldo y rodajas de limón (180 °C, 18 min) o directamente a la plancha. Boniato al microondas o al horno. Ensalada de rúcula y tomate aliñada con AOVE.",
+        note:"EPA+DHA del salmón: clave para inflamación y recuperación muscular. Sustituir por caballa si no hay salmón fresco." }
+    ]
+  },
+  {
+    short:"Mié", full:"Miércoles", sport:"🏋️ Fuerza", sportClass:"fuerza",
+    sportBanner:"Día de fuerza con atún en comida — proteína alta a mediodía. ~2.035 kcal · ~113 g proteína",
+    suppl:null, libre:false, batchCooking:null,
+    meals:[
+      { type:"D", time:"Mañana", name:"Café con leche", tags:[],
+        desc:"Café solo o cortado · bebida vegetal al gusto",
+        prep:"", note:"" },
+      { type:"A", time:"8:00–9:30", name:"Smoothie bowl verde con granola y arándanos", tags:[],
+        desc:"Espinacas 30 g · 1 plátano (a poder ser congelado) · bebida vegetal 250 ml · granola (o avena) 40 g · 1 puñado de arándanos · semillas 10 g (opcional)",
+        prep:"Batir espinacas, plátano y bebida vegetal hasta textura densa. Verter en bol y añadir granola (o avena) y arándanos. Las semillas suman ~3–4 g proteína.",
+        note:"Granola sin azúcares añadidos ni aceites de palma. Si no se encuentra buena granola, sustituir por copos de avena tostados." },
+      { type:"C", time:"13:30–14:30", name:"Ensalada de quinoa con atún al natural, garbanzos y manzana", tags:[],
+        desc:"Quinoa cocida 125–150 g (65 g crudo) · atún al natural 160 g (1 lata grande) · garbanzos cocidos 150 g · tomate cherry 100 g · rúcula · ½ manzana · AOVE 15 ml · zumo de limón",
+        prep:"Mezclar quinoa con atún escurrido, garbanzos, tomate cherry, manzana troceada y rúcula. Aliñar con AOVE y limón.",
+        note:"El atún aporta ~38 g proteína por lata. Elegir atún al natural bajo en sodio. Verdura cruda adicional ad libitum." },
+      { type:"Me", time:"17:00–17:30", name:"Tostada integral con crema de cacahuete, pera y semillas de calabaza", tags:[],
+        desc:"Pan integral 80 g (2 reb.) · crema de cacahuete 100% 20 g · 1 pera · semillas de calabaza 20 g",
+        prep:"Tostar el pan. Extender la crema de cacahuete. Poner rodajas de pera encima y añadir semillas de calabaza.",
+        note:"La crema de cacahuete debe ser 100% sin azúcar ni aceites añadidos. Las pipas de calabaza aportan zinc y magnesio para la recuperación muscular." },
+      { type:"Ce", time:"20:30–21:30", name:"Pasta integral con sofrito de verduras y soja texturizada", tags:[],
+        desc:"Pasta integral cocida 160–180 g (80 g crudo) · berenjena 150 g · calabacín 150 g · tomate triturado 150 g · soja texturizada 30 g · AOVE 10 ml · ajo",
+        prep:"Poner en remojo con agua caliente la soja texturizada 20 min. Mientras, comenzar el sofrito lento de berenjena y calabacín con ajo. Incorporar soja texturizada escurrida. Añadir tomate y reducir 15 min. Mezclar con pasta al dente.",
+        note:"La soja texturizada aporta ~20 g proteína y es muy económica. Añadir levadura nutricional encima para más proteína y sabor umami." }
+    ]
+  },
+  {
+    short:"Jue", full:"Jueves", sport:"🏋️ Fuerza", sportClass:"fuerza",
+    sportBanner:"Día de fuerza. ~2.030 kcal · ~92 g proteína",
+    suppl:null,
+    libre:false, batchCooking:null,
+    meals:[
+      { type:"D", time:"Mañana", name:"Café con leche", tags:[],
+        desc:"Café solo o cortado · bebida vegetal al gusto",
+        prep:"", note:"" },
+      { type:"A", time:"8:00–9:30", name:"Avena con bebida vegetal, pera y almendras laminadas", tags:[],
+        desc:"Copos de avena 60 g · bebida vegetal 250 ml · 1 pera · almendras laminadas 25 g · canela",
+        prep:"Cocer la avena con la bebida vegetal 5 min en un cazo a fuego medio o 2 minutos en microondas a máxima potencia. Añadir la pera troceada y las almendras laminadas tostadas. Variante del lunes con fruta diferente.",
+        note:"La pera es de las frutas mejor toleradas digestivamente. Tostar las almendras laminadas en sartén seca 2 min mejora mucho el sabor." },
+      { type:"C", time:"13:30–14:30", name:"Potaje de alubias blancas con verduras y pan integral", tags:[],
+        desc:"Alubias blancas cocidas 300 g · zanahoria 100 g · puerro 80 g · champiñones · patata 100 g · AOVE 15 ml · laurel · pan integral 40 g",
+        prep:"Sofrito rápido de las verduras. Cuando estén pochadas añadir alubias cocidas, patatas cocidas troceadas y caldo de verduras. Dejar cocer por 10 minutos.",
+        note:"Se conserva 4 días en nevera — ideal para batch cooking. Eliminar la patata si se quiere reducir la carga glucémica." },
+      { type:"Me", time:"17:00–17:30", name:"Hummus con bastones de verdura cruda, manzana y nueces", tags:[],
+        desc:"Hummus 80 g · pimiento rojo 100 g · zanahoria 100 g · 1 manzana mediana · nueces 25 g",
+        prep:"Cortar las verduras en bastones. Servir con hummus como dip. La manzana y las nueces como complemento.",
+        note:"Snack muy voluminoso y saciante con pocas calorías relativas. Aumentar hummus a 100 g si hay más hambre. Añadir 1 cda. de AOVE por encima del hummus." },
+      { type:"Ce", time:"20:30–21:30", name:"Curry de garbanzos", tags:[],
+        desc:"Garbanzos cocidos 250 g · tomate triturado 150 g · yogur o bebida de soja ½ vaso · 1 puñado de espinacas · cebolla · ajo · jengibre · AOVE 10 ml · curry · cúrcuma · comino",
+        prep:"Sofreír la cebolla picada, el ajo y el jengibre rallado con una cucharada de AOVE. Agregar el tomate triturado, el yogur de soja y las especias al gusto (aprox. 1 cdita. de curry, ½ de cúrcuma y comino). Incorporar los garbanzos cocidos y las espinacas frescas. Cocinar todo junto a fuego medio durante 15 minutos, removiendo ocasionalmente hasta que espese.",
+        note:"Ver receta completa en la sección de recetas. Los garbanzos aportan ~25 g proteína y fibra saciante. La cúrcuma tiene efecto antiinflamatorio potenciado con pimienta negra." }
+    ]
+  },
+  {
+    short:"Vie", full:"Viernes", sport:"🏋️ Fuerza", sportClass:"fuerza",
+    sportBanner:"Día de fuerza con caballa en cena — omega-3 máximo. ~2.055 kcal · ~117 g proteína",
+    suppl:null, libre:false, batchCooking:null,
+    meals:[
+      { type:"D", time:"Mañana", name:"Café con leche", tags:[],
+        desc:"Café solo o cortado · bebida vegetal al gusto",
+        prep:"", note:"" },
+      { type:"A", time:"8:00–9:30", name:"Tostadas de masa madre con hummus, tomate, AOVE y semillas", tags:[],
+        desc:"Pan integral masa madre 80 g (2 reb.) · hummus 80 g · tomate en rodajas · AOVE 10 ml · semillas 15 g · pizca de sal",
+        prep:"Tostar el pan. Extender el hummus por encima y añadir las semillas. Colocar el tomate en rodajas encima y añadir generosamente AOVE.",
+        note:"Almuerzo sin fruta para reservar el cupo digestivo. Las semillas (girasol, sésamo o calabaza) aportan minerales y grasas saludables." },
+      { type:"C", time:"13:30–14:30", name:"Ensalada de quinoa con remolacha, garbanzos y naranja", tags:[],
+        desc:"Quinoa cocida 125–150 g (65 g crudo) · remolacha cocida 100 g · espinacas 50 g · 1 naranja (~80 g) · nueces 20 g · garbanzos 150 g · AOVE 15 ml · vinagreta mostaza",
+        prep:"Cortar al gusto las frutas y verduras y mezclar todos los ingredientes en un bowl. Vinagreta de mostaza con 1 cda. de mostaza de Dijon, AOVE, 1 cda. de vinagre, 1 cda. de miel y especias al gusto.",
+        note:"La vitamina C de la naranja mejora la absorción del hierro de espinacas y garbanzos. Añadir zanahoria rallada cruda ad libitum." },
+      { type:"Me", time:"17:00–17:30", name:"Yogur de soja ALPRO con arándanos, kiwi, almendras y semillas", tags:[],
+        desc:"Yogur de soja ALPRO 200 g · arándanos 80 g · almendras 25 g · kiwi 80 g · semillas 15 g",
+        prep:"Mezclar en un bol. El kiwi de merienda facilita la digestión de proteínas del pescado de la cena gracias a la actinidina.",
+        note:"Tomar 60–90 min antes del entreno si es a última hora. Sustituir semillas según lo que haya en casa." },
+      { type:"Ce", time:"20:30–21:30", name:"Caballa con verduras asadas y arroz integral", tags:[],
+        desc:"Caballa fresca 180 g (2 filetes) · brócoli 150 g · pimiento rojo 100 g · calabacín 100 g · arroz integral 125–150 g (60 g crudo) · AOVE 10 ml · limón",
+        prep:"Filetes de caballa al horno con limón y hierbas (180 °C, 15 min) o directamente a la plancha. Verduras asadas en la misma sartén o bandeja. Arroz integral como base.",
+        note:"La caballa es el pescado azul con mayor ratio omega-3/precio. Sus 180 g aportan ~35 g proteína y >2 g de EPA+DHA. Sustituir por sardinas frescas si no hay caballa." }
+    ]
+  },
+  {
+    short:"Sáb ★", full:"Sábado", sport:"🏋️ Fuerza", sportClass:"fuerza",
+    sportBanner:"Día de fuerza con salmón y cena libre. ~2.020 kcal + cena libre ~400–600 kcal",
+    suppl:null, libre:true, batchCooking:null,
+    meals:[
+      { type:"D", time:"Mañana", name:"Café con leche", tags:[],
+        desc:"Café solo o cortado · bebida vegetal al gusto",
+        prep:"", note:"" },
+      { type:"A", time:"9:00–10:00", name:"Tortitas de avena y plátano con arándanos", tags:[],
+        desc:"Copos de avena 60 g · 1 plátano maduro (120 g) · bebida vegetal 100 ml · arándanos 80 g · mermelada al gusto · sirope de arce 1 cdta. (opcional)",
+        prep:"Batir avena con plátano y bebida vegetal hasta obtener una masa homogénea. Cocinar en sartén antiadherente con un mínimo de aceite. Añadir toppings: arándanos, mermelada o sirope de arce al gusto.",
+        note:"Desayuno más tardío y relajado propio del sábado. Ver receta completa en la sección de recetas." },
+      { type:"C", time:"13:30–14:30", name:"Salmón a la plancha con ensalada grande y patatas al horno", tags:[],
+        desc:"Salmón fresco 180 g · rúcula 60 g · tomate 100 g · ½ aguacate (70 g) · rabanitos 80 g · patata 150 g · AOVE 10 ml · limón",
+        prep:"Dorar el salmón a la plancha 3 min por lado con limón. Patatas en dados al horno o microondas con romero y especias al gusto. Ensalada aliñada con AOVE y especias.",
+        note:"El salmón + aguacate aporta una carga antiinflamatoria excelente. Los rabanitos en la ensalada aportan crunch y vitamina C." },
+      { type:"Me", time:"17:30", name:"Smoothie tropical y mix de frutos secos", tags:[],
+        desc:"Mango 80 g · piña 60 g · kiwi 50 g · leche de coco ligera 150 ml · nueces 15 g · almendras 10 g · anacardos 10 g",
+        prep:"Batir mango, piña, kiwi y leche de coco hasta textura homogénea. Servir con el mix de frutos secos como acompañamiento.",
+        note:"La fruta con más azúcar de la semana, aceptable puntualmente en el contexto del sábado. Reducir mango a 60 g si nota molestias." },
+      { type:"Ce", time:"21:00", libre:true, name:"Cena libre — sin restricciones", tags:[],
+        desc:"Sin restricción de alimentos ni cantidades",
+        prep:"",
+        note:"Come lo que te apetezca: chuletón, marisco, pizza artesana, sushi, restaurante con amigos. Esta comida es parte del plan, no una excepción. El déficit semanal lo absorbe perfectamente." }
+    ]
+  },
+  {
+    short:"Dom", full:"Domingo", sport:"🥘 Batch cooking", sportClass:"rest",
+    sportBanner:"Día de descanso. ~2.045 kcal · ~93 g proteína",
+    suppl:"📝 Batch cooking opcional: si tienes tiempo el domingo, preparar la base de la semana ahorra mucho tiempo entre semana.",
+    libre:false,
+    batchCooking:{
+      title:"🥘 Batch cooking del domingo — opcional pero muy recomendable",
+      items:[
+        "Lentejas pardinas (bote cocido escurrido): abrir, escurrir y guardar en tupper. Uso: lunes comida y domingo comida.",
+        "Quinoa (130 g en crudo): hervir 15 min con caldo vegetal → enfriar y guardar. Uso: martes, miércoles y viernes en comidas.",
+        "Arroz integral (120 g en crudo): hervir 35–40 min → guardar en tupper. Uso: lunes cena y viernes cena.",
+        "Crema de calabaza con jengibre (600 ml): asar calabaza 25 min, batir con jengibre y caldo → guardar en tarro. Uso: martes comida.",
+        "Garbanzos (bote cocido escurrido): abrir, escurrir y guardar. Uso: martes, miércoles, jueves (cena curry) y viernes comidas.",
+        "Verduras asadas variadas (pimiento, zanahoria, calabacín — 500 g total): hornear 25 min a 200 °C → guardar. Uso: lunes comida y viernes cena."
+      ],
+      note:"Tiempo activo ~20 min · tiempo total ~60 min. Las legumbres vienen en bote cocido: solo escurrir y guardar. Conservar todo en nevera máx. 4 días o congelar lo que sobre."
+    },
+    meals:[
+      { type:"D", time:"Mañana", name:"Café con leche", tags:[],
+        desc:"Café solo o cortado · bebida vegetal al gusto",
+        prep:"", note:"" },
+      { type:"A", time:"9:00–10:00", name:"Overnight oats con chía, kiwi y nueces", tags:[],
+        desc:"Copos de avena 60 g · bebida vegetal 200 ml · semillas 20 g · 1 kiwi (80 g) · nueces 20 g",
+        prep:"Preparar el sábado por la noche mezclando avena, bebida vegetal y semillas en tarro, tapar y dejar en nevera. Al servir, añadir kiwi troceado y nueces.",
+        note:"Ver receta completa en la sección de recetas. Aprovechar el domingo para hacer el batch cooking completo de la semana." },
+      { type:"C", time:"13:30–14:30", name:"Estofado de lentejas pardinas con verduras y pan integral", tags:["extra"],
+        desc:"Lentejas pardinas 200 g crudo · zanahoria 100 g · patata 100 g · puerro 80 g · tomate 80 g · caldo de verduras · AOVE 15 ml · laurel · comino · pan integral 40 g",
+        prep:"Rehogar la zanahoria, el puerro y el tomate ya cortados, añadir las lentejas y las patatas ya cocidas, cubrir con caldo hasta la textura que guste y dejar en cocción unos 15–20 minutos. TIP: hacer el doble de cantidad por si algún día se complica (se conserva 4 días en nevera).",
+        note:"El comino mejora la digestión de las lentejas y reduce la hinchazón. Doblar la cantidad es el batch cooking de legumbres de la semana." },
+      { type:"Me", time:"17:00–17:30", name:"Tostadas de masa madre con hummus, rabanitos y naranja con almendras", tags:[],
+        desc:"Pan integral masa madre 80 g (2 reb.) · hummus 80 g · rabanitos al gusto · 1 naranja · almendras 20 g",
+        prep:"Tostar el pan. Extender el hummus y añadir rabanitos en rodajas. Tomar la naranja y las almendras como complemento.",
+        note:"Los rabanitos sustituyen al pepino aportando crunch y vitamina C. La naranja potencia la absorción del hierro de las lentejas." },
+      { type:"Ce", time:"20:30–21:30", name:"Pizza integral con base de tortilla de avena", tags:[],
+        desc:"Base de tortilla de avena · 2–3 cdas. tomate triturado · 60 g mozzarella (o vegana) · verduras al gusto · AOVE · orégano · albahaca fresca",
+        prep:"Opción 1 — Pizza tradicional: extiende el tomate sobre la tortilla, salpimentar y espolvorear orégano. Coloca mozzarella. Hornear a 200 °C durante 6–8 min. Añadir albahaca fresca al sacar. Opción 2 — Pizza pesto: unta pesto sobre la base. Saltea champiñones 2–3 min con AOVE. Hornea 5–7 min a 200 °C. Al sacar añadir rúcula y piñones tostados.",
+        note:"Ver recetas completas de ambas opciones en la sección de recetas. La base de tortilla de avena es ligera y muy digestiva." }
+    ]
+  }
+];
+
+const shopCategories = [
+  {
+    label:"🫘 Proteínas", cls:"cat-prot",
+    items:[
+      { name:"Salmón fresco", qty:"~360 g (2 raciones × 180 g)" },
+      { name:"Caballa fresca", qty:"180 g (2 filetes)" },
+      { name:"Atún al natural (lata)", qty:"1 lata grande (160 g)" },
+      { name:"Soja texturizada (fina)", qty:"30 g" },
+      { name:"Edamame (congelado o fresco)", qty:"80 g" },
+      { name:"Lentejas pardinas (secas)", qty:"600 g" },
+      { name:"Alubias blancas (bote cocido)", qty:"300 g cocido" },
+      { name:"Garbanzos (bote o secos)", qty:"~700 g cocido (varios usos)" },
+      { name:"Yogur de soja ALPRO natural s/azúcar", qty:"6–7 unidades (200 g c/u)" },
+      { name:"Mozzarella fresca (o vegana)", qty:"60 g" },
+      { name:"Proteína guisante o cáñamo en polvo", qty:"1 bote (días sin pescado — opcional)" }
+    ]
+  },
+  {
+    label:"🌾 Carbohidratos", cls:"cat-carb",
+    items:[
+      { name:"Copos de avena integral", qty:"~480 g (60 g × 8 usos)" },
+      { name:"Pan integral masa madre", qty:"~480 g (80 g × 6 días)" },
+      { name:"Quinoa (seca)", qty:"195 g" },
+      { name:"Arroz integral (seco)", qty:"180 g" },
+      { name:"Pasta integral", qty:"80 g crudo" },
+      { name:"Granola s/azúcar añadido", qty:"40 g (miércoles almuerzo)" },
+      { name:"Boniato", qty:"250 g (martes cena)" },
+      { name:"Patata", qty:"~250 g (varios usos)" },
+      { name:"Plátano maduro", qty:"4 unidades" },
+      { name:"Frutos rojos (frescos o congelados)", qty:"~150 g" },
+      { name:"Arándanos frescos o congelados", qty:"~480 g" },
+      { name:"Kiwi", qty:"5 unidades" },
+      { name:"Manzana", qty:"3 medianas" },
+      { name:"Pera", qty:"2 medianas" },
+      { name:"Naranja", qty:"4 medianas" },
+      { name:"Remolacha cocida", qty:"100 g" },
+      { name:"Mango (para smoothie sábado)", qty:"80 g" },
+      { name:"Piña (para smoothie sábado)", qty:"60 g" },
+      { name:"Mermelada mín. 85% fruta", qty:"1 bote pequeño (tortitas sábado)" },
+      { name:"Sirope de arce", qty:"pequeño bote — opcional" }
+    ]
+  },
+  {
+    label:"🥑 Grasas", cls:"cat-fat",
+    items:[
+      { name:"AOVE (aceite de oliva virgen extra)", qty:"1 botella (uso semanal)" },
+      { name:"Nueces crudas", qty:"~180 g" },
+      { name:"Almendras crudas", qty:"~180 g" },
+      { name:"Anacardos crudos", qty:"10 g" },
+      { name:"Almendras laminadas", qty:"25 g (jueves almuerzo)" },
+      { name:"Semillas de chía", qty:"30 g" },
+      { name:"Semillas de lino molidas", qty:"10 g (martes almuerzo)" },
+      { name:"Semillas de girasol / sésamo / calabaza", qty:"~100 g variado" },
+      { name:"Aguacate", qty:"1 unidad (martes almuerzo)" },
+      { name:"Crema de cacahuete 100%", qty:"20 g (miércoles snack)" },
+      { name:"Hummus", qty:"~400 g (varios usos)" },
+      { name:"Leche de coco ligera", qty:"150 ml (smoothie sábado)" },
+      { name:"Pesto (puede ser vegano)", qty:"2 cdas. — opcional pizza domingo" },
+      { name:"Piñones tostados", qty:"1 cdta. — opcional pizza pesto" }
+    ]
+  },
+  {
+    label:"🧄 Extras", cls:"cat-extra",
+    items:[
+      { name:"Bebida vegetal sin azúcar (avena, almendra o soja)", qty:"~3 l" },
+      { name:"Leche de vaca o vegetal para café", qty:"al gusto" },
+      { name:"Café", qty:"al gusto" },
+      { name:"Tomate natural triturado (bote)", qty:"~300 g" },
+      { name:"Salsa de tomate natural", qty:"80 g (pizza domingo)" },
+      { name:"Caldo vegetal", qty:"1 l" },
+      { name:"Jengibre fresco", qty:"1 trozo pequeño" },
+      { name:"Cúrcuma en polvo", qty:"1 bote si no hay" },
+      { name:"Curry en polvo", qty:"1 bote si no hay" },
+      { name:"Comino en polvo", qty:"1 bote si no hay" },
+      { name:"Canela en polvo", qty:"1 bote si no hay" },
+      { name:"Orégano seco", qty:"1 bote si no hay" },
+      { name:"Eneldo seco o fresco", qty:"pequeño ramillete" },
+      { name:"Mostaza de Dijon", qty:"1 frasco pequeño" },
+      { name:"Levadura nutricional", qty:"50 g (cenas vegetales)" },
+      { name:"Espinacas baby (frescas)", qty:"~350 g" },
+      { name:"Rúcula fresca", qty:"~180 g" },
+      { name:"Brócoli", qty:"~350 g" },
+      { name:"Champiñones", qty:"~300 g" },
+      { name:"Pimiento rojo y verde", qty:"~900 g variado" },
+      { name:"Calabacín", qty:"~300 g" },
+      { name:"Berenjena", qty:"150 g (miércoles cena)" },
+      { name:"Zanahoria", qty:"~500 g" },
+      { name:"Puerro", qty:"2 unidades" },
+      { name:"Cebolla", qty:"3 unidades" },
+      { name:"Tomate cherry", qty:"100 g" },
+      { name:"Tomate fresco (varios usos)", qty:"~500 g" },
+      { name:"Rabanitos", qty:"~160 g (sábado ensalada + domingo snack)" },
+      { name:"Calabaza (para crema)", qty:"~500 g" },
+      { name:"Limón", qty:"4–5 unidades" },
+      { name:"Ajo", qty:"1 cabeza" },
+      { name:"Albahaca fresca", qty:"1 ramita (pizza domingo)" },
+      { name:"Aceitunas negras", qty:"6–8 unidades — opcional pizza" },
+      { name:"Laurel y hierbas aromáticas", qty:"surtido básico" }
+    ]
+  }
+];
+
+const recetas = [
+  {
+    emoji:"🫙",
+    nombre:"Porridge de Avena",
+    tiempo:"⏱ 5 min",
+    raciones:"🍽 1 persona",
+    utensilios:"🔥 Microondas o cazo",
+    ingredientes:[
+      "60 g de copos de avena",
+      "200–250 ml de bebida vegetal (avena, almendra, soja sin azúcar…)",
+      "1 cda. de semillas (chía, lino molido o sésamo)",
+      "Fruta fresca al gusto (plátano, manzana, frutos rojos, pera…)",
+      "1 pizca de canela"
+    ],
+    pasos:[
+      "En un bol, mezcla la avena con la bebida vegetal.",
+      "Cocina en el microondas durante 2–3 minutos, controlando que no desborde (puedes remover a mitad de cocción) o en un cazo a fuego medio sin dejar de remover hasta obtener la textura que se quiera.",
+      "Añade la canela, mezcla bien y deja reposar 1 minuto para que espese.",
+      "Incorpora las semillas y la fruta por encima justo antes de servir."
+    ],
+    tip:"💡 Versátil y reconfortante. Aporta energía sostenida gracias a los beta-glucanos que ayudan a estabilizar la glucosa. Admite infinitas combinaciones de fruta y toppings."
+  },
+  {
+    emoji:"🫙",
+    nombre:"Overnight Oats",
+    tiempo:"⏱ 5 min prep + noche en nevera",
+    raciones:"🍽 1 persona",
+    utensilios:"🥄 Tarro hermético",
+    ingredientes:[
+      "60 g de copos de avena",
+      "200 ml de bebida vegetal (avena, almendra o soja)",
+      "1 yogur de soja natural (125 g) — opcional",
+      "1 cda. de semillas (chía, lino, sésamo…)",
+      "Fruta al gusto",
+      "1 cda. de miel — opcional"
+    ],
+    pasos:[
+      "En un recipiente hermético o tarro, mezcla la avena, la bebida vegetal, el yogur y las semillas.",
+      "Añade la miel si se usa. Mezcla bien y deja reposar unos minutos.",
+      "Tapa y deja reposar en la nevera durante toda la noche.",
+      "Por la mañana, remueve, incorpora la fruta al gusto y disfruta frío o ligeramente templado."
+    ],
+    tip:"💡 Perfecta para preparar la noche anterior. Rica en fibra y grasas saludables. Se puede añadir crema de cacahuete (1 cda.) para un extra de proteína y grasa saludable."
+  },
+  {
+    emoji:"🍛",
+    nombre:"Curry de Garbanzos",
+    tiempo:"⏱ 20 min",
+    raciones:"🍽 1 persona",
+    utensilios:"🔥 Sartén o cazuela",
+    ingredientes:[
+      "250 g de garbanzos cocidos (1 taza)",
+      "150 g de tomate triturado",
+      "1 yogur de soja natural o ½ vaso de bebida de soja",
+      "1 puñado de espinacas frescas",
+      "Cebolla, ajo y jengibre al gusto",
+      "AOVE 10 ml",
+      "Especias: ~1 cdita. curry, ½ cdita. cúrcuma, ½ cdita. comino"
+    ],
+    pasos:[
+      "Sofreír la cebolla picada, el ajo y el jengibre rallado con una cucharada de AOVE.",
+      "Agregar el tomate triturado, el yogur de soja y las especias al gusto.",
+      "Incorporar los garbanzos cocidos y las espinacas frescas.",
+      "Cocinar todo junto a fuego medio durante 15 minutos, removiendo ocasionalmente hasta que espese."
+    ],
+    tip:"💡 Receta vegetal reconfortante, rica en proteínas, fibra y compuestos bioactivos. La cúrcuma + pimienta negra potencia el efecto antiinflamatorio ×20. Perfecto como plato principal."
+  },
+  {
+    emoji:"🥞",
+    nombre:"Tortitas de Avena y Plátano",
+    tiempo:"⏱ 10 min",
+    raciones:"🍽 1 persona (4–5 tortitas)",
+    utensilios:"🍳 Sartén antiadherente",
+    ingredientes:[
+      "1 plátano maduro (100–120 g)",
+      "4–6 cdas. de avena (40–60 g, en copos finos o molida)",
+      "Bebida vegetal al gusto (para ajustar textura)",
+      "Canela al gusto",
+      "Fruta fresca y/o mermelada mín. 85% de fruta para topping"
+    ],
+    pasos:[
+      "Tritura el plátano con un tenedor o usa una batidora hasta obtener una mezcla uniforme.",
+      "Añade la bebida vegetal, la avena y la canela. Mezcla bien.",
+      "Calienta una sartén antiadherente a fuego medio y vierte pequeñas porciones de masa.",
+      "Cocina durante 1–2 minutos por lado, hasta que estén doradas y firmes."
+    ],
+    tip:"💡 Tortitas esponjosas, naturales y sin azúcares añadidos. Ideales para el desayuno del sábado. Servir con arándanos, mermelada de alta fruta o sirope de arce."
+  },
+  {
+    emoji:"🍕",
+    nombre:"Pizza Tradicional con Base de Tortilla de Avena",
+    tiempo:"⏱ 15 min",
+    raciones:"🍽 1 pizza individual",
+    utensilios:"🔥 Horno a 200 °C",
+    ingredientes:[
+      "Base de tortilla de avena (preparada o comprada)",
+      "2–3 cdas. de tomate triturado o salsa de tomate casera",
+      "60 g de mozzarella fresca (o mozzarella vegana) en láminas",
+      "4–6 hojas de albahaca fresca",
+      "6–8 aceitunas negras en rodajas (opcional)",
+      "1 cdita. de orégano seco",
+      "Pimienta negra y 1 cdita. de AOVE"
+    ],
+    pasos:[
+      "Extiende el tomate sobre la tortilla de avena. Salpimentar y espolvorear orégano.",
+      "Coloca las láminas de mozzarella y las aceitunas. Añade 1 cdita. de AOVE.",
+      "Termina en horno precalentado a 200 °C durante 6–8 min hasta que la mozzarella funda.",
+      "Saca, añade las hojas de albahaca fresca y sirve."
+    ],
+    tip:"💡 Tradicional y equilibrada. La base de tortilla de avena es ligera y muy digestiva. La mozzarella vegana funciona igual de bien para versión 100% vegetal."
+  },
+  {
+    emoji:"🍕",
+    nombre:"Pizza de Pesto con Base de Tortilla de Avena",
+    tiempo:"⏱ 12 min",
+    raciones:"🍽 1 pizza individual",
+    utensilios:"🔥 Horno a 200 °C + sartén",
+    ingredientes:[
+      "Base de tortilla de avena (preparada o comprada)",
+      "2 cdas. de pesto (puede ser pesto vegano)",
+      "1 puñado grande de champiñones laminados",
+      "1 puñado de rúcula para poner al final",
+      "1 cdita. de piñones tostados (opcional)",
+      "1 cdita. de AOVE · sal y pimienta"
+    ],
+    pasos:[
+      "Unta el pesto sobre la base de tortilla de avena en una capa fina.",
+      "Saltea rápido los champiñones con 1 cdita. de AOVE 2–3 min con sal y pimienta; reparte sobre el pesto.",
+      "Hornea 5–7 min a 200 °C solo para calentar.",
+      "Al sacar, añade la rúcula y los piñones por encima. Servir inmediatamente."
+    ],
+    tip:"💡 Aromática y ligera. El pesto aporta un toque herbáceo mientras los champiñones dan textura y sabor umami. Los piñones añaden crocancia y grasas saludables."
+  }
+];
+
+function badgeClass(type, libre) {
+  if (libre) return "badge-libre";
+  const map = { D:"badge-d", A:"badge-a", Me:"badge-me", C:"badge-c", Ce:"badge-ce" };
+  return map[type] || "badge-ce";
+}
+function badgeLabel(type, libre) {
+  if (libre) return "Libre";
+  const map = { D:"Desayuno", A:"Almuerzo", Me:"Snack", C:"Comida", Ce:"Cena" };
+  return map[type] || type;
+}
+
+let current = 0;
+
+function render() {
+  const d = days[current];
+  let html = `<div style="font-size:18px;font-weight:500;color:#111;margin-bottom:8px">${d.full}</div>`;
+  html += `<div class="pn-sport-banner ${d.sportClass}">${d.sport} — ${d.sportBanner}</div>`;
+  if (d.libre) html += `<div class="pn-libre-banner">La cena de este día está reservada como comida libre (10%). El resto del día mantiene la base vegetal habitual. El déficit semanal lo absorbe perfectamente.</div>`;
+  if (d.suppl) html += `<div class="pn-supp-banner">` + d.suppl.replace(/\n/g,"<br>") + `</div>`;
+  if (d.batchCooking) {
+    const bc = d.batchCooking;
+    const items = bc.items.map(i => `<li>${i}</li>`).join("");
+    html += `<div class="pn-batch-section"><h3>${bc.title}</h3><ul>${items}</ul><div class="bc-note">⏱ ${bc.note}</div></div>`;
+  }
+  html += `<div class="pn-meals">`;
+  d.meals.forEach(m => {
+    const bc = badgeClass(m.type, m.libre);
+    const bl = badgeLabel(m.type, m.libre);
+    let tagsHtml = "";
+    if (m.tags && m.tags.includes("extra")) tagsHtml += `<span class="pn-extra-tag">🥡 Hacer cantidad extra</span> `;
+    if (m.tags && m.tags.includes("batch")) tagsHtml += `<span class="pn-batch-tag">♻️ Usar del batch cooking</span> `;
+    const rawParts = m.desc.split(/\n/).map(s => s.trim()).filter(s => s.length > 0);
+    const ingsHtml = rawParts.map(p => `<span class="pn-ing">${p}</span>`).join("");
+    const prepHtml = m.prep ? `<div class="pn-prep">🍳 ${m.prep}</div>` : "";
+    const noteHtml = m.note ? `<div class="pn-note">💡 ${m.note}</div>` : "";
+    html += `
+      <div class="pn-card">
+        <div class="pn-meal-header">
+          <span class="pn-badge ${bc}">${bl}</span>
+          <span class="pn-time">${m.time}</span>
+        </div>
+        ${tagsHtml ? `<div style="margin-bottom:6px">${tagsHtml}</div>` : ""}
+        <div class="pn-name">${m.name}</div>
+        <div class="pn-ing-list">${ingsHtml}</div>
+        ${prepHtml}
+        ${noteHtml}
+      </div>`;
+  });
+  html += `</div>`;
+  document.getElementById("dayView").innerHTML = html;
+}
+
+function buildTabs() {
+  const container = document.getElementById("dayTabs");
+  days.forEach((d, i) => {
+    const btn = document.createElement("button");
+    btn.className = "pn-day-btn" + (i === 0 ? " active" : "");
+    btn.textContent = d.short;
+    btn.onclick = () => {
+      document.querySelectorAll(".pn-day-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      current = i;
+      render();
+    };
+    container.appendChild(btn);
+  });
+}
+
+let shopCurrent = 0;
+
+function renderShop() {
+  const cat = shopCategories[shopCurrent];
+  let html = '<div class="pn-shop-list">';
+  cat.items.forEach(item => {
+    html += `<div class="pn-shop-item ${cat.cls}" onclick="this.classList.toggle('done')">
+      <div class="pn-shop-item-name">${item.name}</div>
+      <div class="pn-shop-item-qty">${item.qty}</div>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById("shopView").innerHTML = html;
+}
+
+function buildShopTabs() {
+  const container = document.getElementById("shopTabs");
+  shopCategories.forEach((cat, i) => {
+    const btn = document.createElement("button");
+    btn.className = "pn-shop-btn " + cat.cls + (i === 0 ? " active" : "");
+    btn.textContent = cat.label;
+    btn.onclick = () => {
+      document.querySelectorAll(".pn-shop-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      shopCurrent = i;
+      renderShop();
+    };
+    container.appendChild(btn);
+  });
+}
+
+function buildRecetas() {
+  if (typeof recetas === "undefined" || !recetas.length) return;
+  const container = document.getElementById("recetasList");
+  if (!container) return;
+  recetas.forEach((r, i) => {
+    const div = document.createElement("div");
+    div.className = "pn-receta";
+    div.innerHTML = `
+      <div class="pn-receta-header" onclick="toggleReceta(${i})">
+        <div class="pn-receta-title">${r.emoji} ${r.nombre}</div>
+        <span class="pn-receta-arrow">▸</span>
+      </div>
+      <div class="pn-receta-body">
+        <div class="pn-receta-meta">
+          <span class="pn-receta-meta-pill">${r.tiempo}</span>
+          <span class="pn-receta-meta-pill">${r.raciones}</span>
+          <span class="pn-receta-meta-pill">${r.utensilios}</span>
+        </div>
+        <div class="pn-receta-section">🧺 Ingredientes</div>
+        <div class="pn-receta-ings">${r.ingredientes.map(ing => `<span class="pn-receta-ing">${ing}</span>`).join("")}</div>
+        <div class="pn-receta-section">👨‍🍳 Elaboración</div>
+        <ol class="pn-receta-steps">${r.pasos.map((p,n) => `<li class="pn-receta-step"><span class="pn-receta-step-num">${n+1}</span><span>${p}</span></li>`).join("")}</ol>
+        <div class="pn-receta-tip">${r.tip}</div>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function toggleReceta(i) {
+  document.querySelectorAll(".pn-receta")[i].classList.toggle("open");
+}
+
+buildTabs();
+render();
+buildShopTabs();
+renderShop();
+buildRecetas();
+</script>
+
+</body>
+</html>
