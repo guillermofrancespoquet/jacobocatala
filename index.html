@@ -154,7 +154,7 @@
 <body>
 
 <h1>Planificación Nutricional — Jacobo</h1>
-<p class="subtitle">Pérdida de grasa · Base 90% vegetal · 4 comidas/día + café · ~2000–2050 kcal · Déficit ~450–500 kcal · ~140 g proteína</p>
+<p class="subtitle">Pérdida de grasa · Base 90% vegetal · 4 comidas/día + café · ~1.820–1.850 kcal · Déficit ~450–500 kcal · ~90–115 g proteína</p>
 
 <!-- DESCRIPCIÓN DEL CLIENTE -->
 <div style="border:1px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;background:#fafafa;">
@@ -186,7 +186,7 @@
 <!-- OBJETIVO -->
 <div style="background:#EBF3FB;border:1.5px solid #A8C8E8;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;">
   <div style="font-size:11px;font-weight:600;color:#1a4a72;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">Objetivo</div>
-  <p style="font-size:14px;font-weight:600;color:#0C3358;line-height:1.65;">Reducir la grasa corporal del 22,2% al 20% en 30 días (~1,8 kg de grasa) mediante un déficit calórico controlado de 450–500 kcal/día sobre un TEE estimado de ~2500 kcal. La base del plan es 90% vegetal, preservando la masa muscular esquelética (41,4 kg, muy por encima del rango normal) con una ingesta proteica de ~140 g/día (1,7 g/kg). El pescado azul (salmón, caballa) se incorpora hasta 3–4 veces por semana. La grasa acumulada en abdomen y cresta ilíaca es el principal punto de intervención.</p>
+  <p style="font-size:14px;font-weight:600;color:#0C3358;line-height:1.65;">Reducir los pliegues de abdominal (14 mm) y cresta ilíaca (15 mm) como foco principal de la siguiente etapa. El plan se ajusta a ~1.820–1.850 kcal/día generando un déficit real de ~450–500 kcal sobre un TEE estimado de ~2.300 kcal, con el objetivo de alcanzar ~0,45–0,5 kg de pérdida de grasa semanal. Los ajustes se concentran en AOVE (máx. 10 ml/comida, 8 ml en cenas con pescado), frutos secos (20 g en snacks), quinoa y arroz (110–120 g cocido) y patata/boniato (reducidos). La proteína y los carbohidratos pre-entrenamiento se mantienen intactos.</p>
 </div>
 
 <!-- PERFIL DE LA PERSONA -->
@@ -471,7 +471,7 @@
 const days = [
   {
     short:"Lun", full:"Lunes", sport:"🏋️ Fuerza", sportClass:"fuerza",
-    sportBanner:"Día de fuerza. ~2.060 kcal · ~95 g proteína",
+    sportBanner:"Día de fuerza. ~1.830 kcal · ~93 g proteína",
     suppl:null,
     libre:false, batchCooking:null,
     meals:[
@@ -480,26 +480,26 @@ const days = [
         prep:"",
         note:"La mejor opción es la bebida vegetal. Si se prefiere leche de vaca, la desnatada es la más adecuada: proteína de alta calidad con mínima grasa saturada. No cuenta en el cómputo calórico principal del día." },
       { type:"A", time:"8:00–9:30", name:"Avena con bebida vegetal, nueces, frutos rojos y plátano", tags:[],
-        desc:"Copos de avena 60 g · bebida vegetal 250 ml · nueces 30 g · 1 plátano · 1 puñado de frutos rojos · canela al gusto",
+        desc:"Copos de avena 60 g · bebida vegetal 250 ml · nueces 20 g · 1 plátano · 1 puñado de frutos rojos · canela al gusto",
         prep:"Cocer la avena con la bebida vegetal 5 min en un cazo a fuego medio o 2 minutos en microondas a máxima potencia. Extraer y decorar con plátano en rodajas, frutos rojos, nueces y canela.",
         note:"Frutos rojos y plátano aportan dulzor natural y antioxidantes sin necesidad de azúcares añadidos. La canela mejora la respuesta glucémica." },
       { type:"C", time:"13:30–14:30", name:"Ensalada de lentejas con edamame y verduras asadas", tags:[],
-        desc:"Lentejas cocidas 320 g · edamame cocido 80 g · pimiento rojo asado 100 g · zanahoria asada 80 g · espinacas 50 g · AOVE 15 ml · limón",
+        desc:"Lentejas cocidas 320 g · edamame cocido 80 g · pimiento rojo asado 100 g · zanahoria asada 80 g · espinacas 50 g · AOVE 10 ml · limón",
         prep:"Mezclar lentejas frías con el edamame y las verduras asadas templadas. El edamame aporta proteína completa. Aliñar al momento con AOVE, especias al gusto y zumo de limón.",
         note:"Sustituir edamame por tofu a la plancha (100 g) si no se encuentra. Verdura cruda adicional ad libitum." },
       { type:"Me", time:"17:00–17:30", name:"Yogur de soja ALPRO con kiwi, manzana, almendras y semillas", tags:[],
-        desc:"Yogur de soja ALPRO 200 g · 1 kiwi · ½ manzana · almendras 30 g · semillas 10–15 g",
+        desc:"Yogur de soja ALPRO 200 g · 1 kiwi · ½ manzana · almendras 20 g · semillas 10–15 g",
         prep:"Cortar la fruta en trozos. Mezclar en un bol con el yogur, añadir las almendras y las semillas por encima.",
         note:"El kiwi es especialmente digestivo para él: la actinidina mejora la digestión de proteínas. Semillas recomendadas: chía o lino molido." },
       { type:"Ce", time:"20:30–21:30", name:"Brócoli, champiñones y arroz integral con proteína a elegir", tags:[],
-        desc:"Proteína a elegir · brócoli 200 g · champiñones 100 g · arroz integral 125–150 g (60 g crudo) · AOVE 10 ml · cúrcuma · pimienta · jengibre rallado opcional\n— Opción A: garbanzos cocidos 200 g\n— Opción B: merluza o bacalao a la plancha 200 g (~40 g prot)\n— Opción C: tempeh desmenuzado 150 g",
+        desc:"Proteína a elegir · brócoli 200 g · champiñones 100 g · arroz integral 110–120 g cocido (55 g crudo) · AOVE 10 ml · cúrcuma · pimienta · jengibre rallado opcional\n— Opción A: garbanzos cocidos 200 g\n— Opción B: merluza o bacalao a la plancha 200 g (~40 g prot)\n— Opción C: tempeh desmenuzado 150 g",
         prep:"Saltear la proteína elegida en sartén con AOVE. Añadir brócoli en ramilletes y champiñones. Condimentar con cúrcuma, pimienta y jengibre. Servir sobre arroz integral cocido o añadir arroz y saltear 2 minutos más.",
         note:"Cúrcuma + pimienta negra aumenta la biodisponibilidad de curcumina ×20." }
     ]
   },
   {
     short:"Mar", full:"Martes", sport:"🏋️ Fuerza", sportClass:"fuerza",
-    sportBanner:"Día de fuerza con salmón en cena — omega-3 y proteína alta. ~2.065 kcal · ~118 g proteína",
+    sportBanner:"Día de fuerza con salmón en cena — omega-3 y proteína alta. ~1.840 kcal · ~116 g proteína",
     suppl:null, libre:false, batchCooking:null,
     meals:[
       { type:"D", time:"Mañana", name:"Café con leche", tags:[],
@@ -510,22 +510,22 @@ const days = [
         prep:"Tostar el pan. Machacar el aguacate con unas gotas de limón y sal. Poner el tomate en rodajas y espolvorear el lino molido por encima.",
         note:"El lino debe ser molido (no entero) para aprovechar los omega-3. Sin fruta en el almuerzo este día para distribuir mejor el cupo digestivo." },
       { type:"C", time:"13:30–14:30", name:"Crema de calabaza + quinoa con garbanzos y espinacas", tags:[],
-        desc:"Crema de calabaza con jengibre 300 ml · quinoa 125–150 g (65 g crudo) · garbanzos cocidos 180 g · espinacas 80 g · AOVE 15 ml",
+        desc:"Crema de calabaza con jengibre 300 ml · quinoa 110–120 g cocida (55 g crudo) · garbanzos cocidos 180 g · espinacas 80 g · AOVE 10 ml",
         prep:"Mezclar la crema de calabaza (puede ser comprada, ej. marca Don Simón) con jengibre rallado. Saltear la quinoa cocida con garbanzos y espinacas con ajo, especias y AOVE.",
         note:"Preparar doble cantidad de crema el domingo para tener reserva toda la semana." },
       { type:"Me", time:"17:00–17:30", name:"Yogur de soja ALPRO con arándanos, naranja, almendras y nueces", tags:[],
-        desc:"Yogur de soja ALPRO 200 g · arándanos 80 g · 1 naranja troceada · nueces 20 g · almendras 20 g",
+        desc:"Yogur de soja ALPRO 200 g · arándanos 80 g · 1 naranja troceada · nueces 15 g · almendras 15 g",
         prep:"Mezclar en un bol. La vitamina C de la naranja mejora la absorción del hierro no hemo del almuerzo.",
         note:"Si el entreno es por la tarde, tomar esta merienda 60–90 min antes como pre-workout ligero." },
       { type:"Ce", time:"20:30–21:30", name:"Salmón con boniato y ensalada verde", tags:[],
-        desc:"Salmón fresco 180 g · boniato 250 g · rúcula 60 g · tomate 80 g · AOVE 10 ml · limón · eneldo",
+        desc:"Salmón fresco 180 g · boniato 180 g · rúcula 60 g · tomate 80 g · AOVE 8 ml · limón · eneldo",
         prep:"Salmón en papillote al horno con eneldo y rodajas de limón (180 °C, 18 min) o directamente a la plancha. Boniato al microondas o al horno. Ensalada de rúcula y tomate aliñada con AOVE.",
         note:"EPA+DHA del salmón: clave para inflamación y recuperación muscular. Sustituir por caballa si no hay salmón fresco." }
     ]
   },
   {
     short:"Mié", full:"Miércoles", sport:"🏋️ Fuerza", sportClass:"fuerza",
-    sportBanner:"Día de fuerza con atún en comida — proteína alta a mediodía. ~2.035 kcal · ~113 g proteína",
+    sportBanner:"Día de fuerza con atún en comida — proteína alta a mediodía. ~1.820 kcal · ~111 g proteína",
     suppl:null, libre:false, batchCooking:null,
     meals:[
       { type:"D", time:"Mañana", name:"Café con leche", tags:[],
@@ -536,22 +536,22 @@ const days = [
         prep:"Batir espinacas, plátano y bebida vegetal hasta textura densa. Verter en bol y añadir granola (o avena) y arándanos. Las semillas suman ~3–4 g proteína.",
         note:"Granola sin azúcares añadidos ni aceites de palma. Si no se encuentra buena granola, sustituir por copos de avena tostados." },
       { type:"C", time:"13:30–14:30", name:"Ensalada de quinoa con atún al natural, garbanzos y manzana", tags:[],
-        desc:"Quinoa cocida 125–150 g (65 g crudo) · atún al natural 160 g (1 lata grande) · garbanzos cocidos 150 g · tomate cherry 100 g · rúcula · ½ manzana · AOVE 15 ml · zumo de limón",
+        desc:"Quinoa cocida 110–120 g (55 g crudo) · atún al natural 160 g (1 lata grande) · garbanzos cocidos 150 g · tomate cherry 100 g · rúcula · ½ manzana · AOVE 10 ml · zumo de limón",
         prep:"Mezclar quinoa con atún escurrido, garbanzos, tomate cherry, manzana troceada y rúcula. Aliñar con AOVE y limón.",
         note:"El atún aporta ~38 g proteína por lata. Elegir atún al natural bajo en sodio. Verdura cruda adicional ad libitum." },
       { type:"Me", time:"17:00–17:30", name:"Tostada integral con crema de cacahuete, pera y semillas de calabaza", tags:[],
-        desc:"Pan integral 80 g (2 reb.) · crema de cacahuete 100% 20 g · 1 pera · semillas de calabaza 20 g",
+        desc:"Pan integral 80 g (2 reb.) · crema de cacahuete 100% 20 g · 1 pera · semillas de calabaza 15 g",
         prep:"Tostar el pan. Extender la crema de cacahuete. Poner rodajas de pera encima y añadir semillas de calabaza.",
         note:"La crema de cacahuete debe ser 100% sin azúcar ni aceites añadidos. Las pipas de calabaza aportan zinc y magnesio para la recuperación muscular." },
       { type:"Ce", time:"20:30–21:30", name:"Pasta integral con sofrito de verduras y soja texturizada", tags:[],
-        desc:"Pasta integral cocida 160–180 g (80 g crudo) · berenjena 150 g · calabacín 150 g · tomate triturado 150 g · soja texturizada 30 g · AOVE 10 ml · ajo",
+        desc:"Pasta integral cocida 160 g (80 g crudo) · berenjena 150 g · calabacín 150 g · tomate triturado 150 g · soja texturizada 30 g · AOVE 10 ml · ajo",
         prep:"Poner en remojo con agua caliente la soja texturizada 20 min. Mientras, comenzar el sofrito lento de berenjena y calabacín con ajo. Incorporar soja texturizada escurrida. Añadir tomate y reducir 15 min. Mezclar con pasta al dente.",
         note:"La soja texturizada aporta ~20 g proteína y es muy económica. Añadir levadura nutricional encima para más proteína y sabor umami." }
     ]
   },
   {
     short:"Jue", full:"Jueves", sport:"🏋️ Fuerza", sportClass:"fuerza",
-    sportBanner:"Día de fuerza. ~2.030 kcal · ~92 g proteína",
+    sportBanner:"Día de fuerza. ~1.810 kcal · ~90 g proteína",
     suppl:null,
     libre:false, batchCooking:null,
     meals:[
@@ -563,13 +563,13 @@ const days = [
         prep:"Cocer la avena con la bebida vegetal 5 min en un cazo a fuego medio o 2 minutos en microondas a máxima potencia. Añadir la pera troceada y las almendras laminadas tostadas. Variante del lunes con fruta diferente.",
         note:"La pera es de las frutas mejor toleradas digestivamente. Tostar las almendras laminadas en sartén seca 2 min mejora mucho el sabor." },
       { type:"C", time:"13:30–14:30", name:"Potaje de alubias blancas con verduras y pan integral", tags:[],
-        desc:"Alubias blancas cocidas 300 g · zanahoria 100 g · puerro 80 g · champiñones · patata 100 g · AOVE 15 ml · laurel · pan integral 40 g",
+        desc:"Alubias blancas cocidas 300 g · zanahoria 100 g · puerro 80 g · champiñones · patata 100 g · AOVE 10 ml · laurel · pan integral 40 g",
         prep:"Sofrito rápido de las verduras. Cuando estén pochadas añadir alubias cocidas, patatas cocidas troceadas y caldo de verduras. Dejar cocer por 10 minutos.",
         note:"Se conserva 4 días en nevera — ideal para batch cooking. Eliminar la patata si se quiere reducir la carga glucémica." },
       { type:"Me", time:"17:00–17:30", name:"Hummus con bastones de verdura cruda, manzana y nueces", tags:[],
-        desc:"Hummus 80 g · pimiento rojo 100 g · zanahoria 100 g · 1 manzana mediana · nueces 25 g",
+        desc:"Hummus 60 g · pimiento rojo 100 g · zanahoria 100 g · 1 manzana mediana · nueces 20 g",
         prep:"Cortar las verduras en bastones. Servir con hummus como dip. La manzana y las nueces como complemento.",
-        note:"Snack muy voluminoso y saciante con pocas calorías relativas. Aumentar hummus a 100 g si hay más hambre. Añadir 1 cda. de AOVE por encima del hummus." },
+        note:"Snack voluminoso y saciante. Si hay más hambre puntual, añadir más verdura cruda ad libitum en lugar de más hummus." },
       { type:"Ce", time:"20:30–21:30", name:"Curry de garbanzos", tags:[],
         desc:"Garbanzos cocidos 250 g · tomate triturado 150 g · yogur o bebida de soja ½ vaso · 1 puñado de espinacas · cebolla · ajo · jengibre · AOVE 10 ml · curry · cúrcuma · comino",
         prep:"Sofreír la cebolla picada, el ajo y el jengibre rallado con una cucharada de AOVE. Agregar el tomate triturado, el yogur de soja y las especias al gusto (aprox. 1 cdita. de curry, ½ de cúrcuma y comino). Incorporar los garbanzos cocidos y las espinacas frescas. Cocinar todo junto a fuego medio durante 15 minutos, removiendo ocasionalmente hasta que espese.",
@@ -578,33 +578,33 @@ const days = [
   },
   {
     short:"Vie", full:"Viernes", sport:"🏋️ Fuerza", sportClass:"fuerza",
-    sportBanner:"Día de fuerza con caballa en cena — omega-3 máximo. ~2.055 kcal · ~117 g proteína",
+    sportBanner:"Día de fuerza con caballa en cena — omega-3 máximo. ~1.835 kcal · ~115 g proteína",
     suppl:null, libre:false, batchCooking:null,
     meals:[
       { type:"D", time:"Mañana", name:"Café con leche", tags:[],
         desc:"Café solo o cortado · bebida vegetal al gusto",
         prep:"", note:"" },
       { type:"A", time:"8:00–9:30", name:"Tostadas de masa madre con hummus, tomate, AOVE y semillas", tags:[],
-        desc:"Pan integral masa madre 80 g (2 reb.) · hummus 80 g · tomate en rodajas · AOVE 10 ml · semillas 15 g · pizca de sal",
-        prep:"Tostar el pan. Extender el hummus por encima y añadir las semillas. Colocar el tomate en rodajas encima y añadir generosamente AOVE.",
+        desc:"Pan integral masa madre 80 g (2 reb.) · hummus 60 g · tomate en rodajas · AOVE 10 ml · semillas 15 g · pizca de sal",
+        prep:"Tostar el pan. Extender el hummus por encima y añadir las semillas. Colocar el tomate en rodajas encima y añadir AOVE.",
         note:"Almuerzo sin fruta para reservar el cupo digestivo. Las semillas (girasol, sésamo o calabaza) aportan minerales y grasas saludables." },
       { type:"C", time:"13:30–14:30", name:"Ensalada de quinoa con remolacha, garbanzos y naranja", tags:[],
-        desc:"Quinoa cocida 125–150 g (65 g crudo) · remolacha cocida 100 g · espinacas 50 g · 1 naranja (~80 g) · nueces 20 g · garbanzos 150 g · AOVE 15 ml · vinagreta mostaza",
+        desc:"Quinoa cocida 110–120 g (55 g crudo) · remolacha cocida 100 g · espinacas 50 g · 1 naranja (~80 g) · nueces 20 g · garbanzos 150 g · AOVE 10 ml · vinagreta mostaza",
         prep:"Cortar al gusto las frutas y verduras y mezclar todos los ingredientes en un bowl. Vinagreta de mostaza con 1 cda. de mostaza de Dijon, AOVE, 1 cda. de vinagre, 1 cda. de miel y especias al gusto.",
         note:"La vitamina C de la naranja mejora la absorción del hierro de espinacas y garbanzos. Añadir zanahoria rallada cruda ad libitum." },
       { type:"Me", time:"17:00–17:30", name:"Yogur de soja ALPRO con arándanos, kiwi, almendras y semillas", tags:[],
-        desc:"Yogur de soja ALPRO 200 g · arándanos 80 g · almendras 25 g · kiwi 80 g · semillas 15 g",
+        desc:"Yogur de soja ALPRO 200 g · arándanos 80 g · almendras 20 g · kiwi 80 g · semillas 10 g",
         prep:"Mezclar en un bol. El kiwi de merienda facilita la digestión de proteínas del pescado de la cena gracias a la actinidina.",
         note:"Tomar 60–90 min antes del entreno si es a última hora. Sustituir semillas según lo que haya en casa." },
       { type:"Ce", time:"20:30–21:30", name:"Caballa con verduras asadas y arroz integral", tags:[],
-        desc:"Caballa fresca 180 g (2 filetes) · brócoli 150 g · pimiento rojo 100 g · calabacín 100 g · arroz integral 125–150 g (60 g crudo) · AOVE 10 ml · limón",
+        desc:"Caballa fresca 180 g (2 filetes) · brócoli 150 g · pimiento rojo 100 g · calabacín 100 g · arroz integral 110–120 g cocido (55 g crudo) · AOVE 8 ml · limón",
         prep:"Filetes de caballa al horno con limón y hierbas (180 °C, 15 min) o directamente a la plancha. Verduras asadas en la misma sartén o bandeja. Arroz integral como base.",
         note:"La caballa es el pescado azul con mayor ratio omega-3/precio. Sus 180 g aportan ~35 g proteína y >2 g de EPA+DHA. Sustituir por sardinas frescas si no hay caballa." }
     ]
   },
   {
     short:"Sáb ★", full:"Sábado", sport:"🏋️ Fuerza", sportClass:"fuerza",
-    sportBanner:"Día de fuerza con salmón y cena libre. ~2.020 kcal + cena libre ~400–600 kcal",
+    sportBanner:"Día de fuerza con salmón y cena libre. ~1.800 kcal + cena libre ~400–600 kcal",
     suppl:null, libre:true, batchCooking:null,
     meals:[
       { type:"D", time:"Mañana", name:"Café con leche", tags:[],
@@ -615,7 +615,7 @@ const days = [
         prep:"Batir avena con plátano y bebida vegetal hasta obtener una masa homogénea. Cocinar en sartén antiadherente con un mínimo de aceite. Añadir toppings: arándanos, mermelada o sirope de arce al gusto.",
         note:"Desayuno más tardío y relajado propio del sábado. Ver receta completa en la sección de recetas." },
       { type:"C", time:"13:30–14:30", name:"Salmón a la plancha con ensalada grande y patatas al horno", tags:[],
-        desc:"Salmón fresco 180 g · rúcula 60 g · tomate 100 g · ½ aguacate (70 g) · rabanitos 80 g · patata 150 g · AOVE 10 ml · limón",
+        desc:"Salmón fresco 180 g · rúcula 60 g · tomate 100 g · ½ aguacate (70 g) · rabanitos 80 g · patata 100 g · AOVE 8 ml · limón",
         prep:"Dorar el salmón a la plancha 3 min por lado con limón. Patatas en dados al horno o microondas con romero y especias al gusto. Ensalada aliñada con AOVE y especias.",
         note:"El salmón + aguacate aporta una carga antiinflamatoria excelente. Los rabanitos en la ensalada aportan crunch y vitamina C." },
       { type:"Me", time:"17:30", name:"Smoothie tropical y mix de frutos secos", tags:[],
@@ -630,7 +630,7 @@ const days = [
   },
   {
     short:"Dom", full:"Domingo", sport:"🥘 Batch cooking", sportClass:"rest",
-    sportBanner:"Día de descanso. ~2.045 kcal · ~93 g proteína",
+    sportBanner:"Día de descanso. ~1.820 kcal · ~91 g proteína",
     suppl:"📝 Batch cooking opcional: si tienes tiempo el domingo, preparar la base de la semana ahorra mucho tiempo entre semana.",
     libre:false,
     batchCooking:{
@@ -654,11 +654,11 @@ const days = [
         prep:"Preparar el sábado por la noche mezclando avena, bebida vegetal y semillas en tarro, tapar y dejar en nevera. Al servir, añadir kiwi troceado y nueces.",
         note:"Ver receta completa en la sección de recetas. Aprovechar el domingo para hacer el batch cooking completo de la semana." },
       { type:"C", time:"13:30–14:30", name:"Estofado de lentejas pardinas con verduras y pan integral", tags:["extra"],
-        desc:"Lentejas pardinas 200 g crudo · zanahoria 100 g · patata 100 g · puerro 80 g · tomate 80 g · caldo de verduras · AOVE 15 ml · laurel · comino · pan integral 40 g",
+        desc:"Lentejas pardinas 200 g crudo · zanahoria 100 g · patata 100 g · puerro 80 g · tomate 80 g · caldo de verduras · AOVE 10 ml · laurel · comino · pan integral 40 g",
         prep:"Rehogar la zanahoria, el puerro y el tomate ya cortados, añadir las lentejas y las patatas ya cocidas, cubrir con caldo hasta la textura que guste y dejar en cocción unos 15–20 minutos. TIP: hacer el doble de cantidad por si algún día se complica (se conserva 4 días en nevera).",
         note:"El comino mejora la digestión de las lentejas y reduce la hinchazón. Doblar la cantidad es el batch cooking de legumbres de la semana." },
       { type:"Me", time:"17:00–17:30", name:"Tostadas de masa madre con hummus, rabanitos y naranja con almendras", tags:[],
-        desc:"Pan integral masa madre 80 g (2 reb.) · hummus 80 g · rabanitos al gusto · 1 naranja · almendras 20 g",
+        desc:"Pan integral masa madre 80 g (2 reb.) · hummus 80 g · rabanitos al gusto · 1 naranja · almendras 15 g",
         prep:"Tostar el pan. Extender el hummus y añadir rabanitos en rodajas. Tomar la naranja y las almendras como complemento.",
         note:"Los rabanitos sustituyen al pepino aportando crunch y vitamina C. La naranja potencia la absorción del hierro de las lentejas." },
       { type:"Ce", time:"20:30–21:30", name:"Pizza integral con base de tortilla de avena", tags:[],
